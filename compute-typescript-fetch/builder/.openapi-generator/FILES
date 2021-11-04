@@ -1,0 +1,10 @@
+.openapi-generator-ignore
+apis/DefaultApi.ts
+apis/index.ts
+index.ts
+models/EditorState.ts
+models/InlineResponse200.ts
+models/InlineResponse2001.ts
+models/TestPayload.ts
+models/index.ts
+runtime.ts
