@@ -1,6 +1,13 @@
+import fetch from 'node-fetch';
+
 import * as administrative from "../compute-typescript-fetch/administrative"
 import * as builder from "../compute-typescript-fetch/builder"
 import * as execution from "../compute-typescript-fetch/execution"
+
+if (!globalThis.fetch) {
+    // @ts-ignore
+	globalThis.fetch = fetch;
+}
 
 type config = {
     baseUrl?: string;

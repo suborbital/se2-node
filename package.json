@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/suborbital/compute-node#readme",
   "dependencies": {
+    "@types/node": "12.20.20",
+    "node-fetch": "^2.6.6",
     "typescript": "~3.5.2"
   }
 }
