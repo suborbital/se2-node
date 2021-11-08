@@ -10,6 +10,10 @@ interface BuildResponse {
   outputLog: string;
 }
 
+interface DeployDraftResponse {
+  version: string;
+}
+
 export class Builder {
   private baseUrl: string;
 
@@ -50,7 +54,7 @@ export class Builder {
       null,
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    return response.data as string;
+    return response.data as DeployDraftResponse;
   }
 
   async getTemplate({ fnName, language }: BuildableRunnale) {
