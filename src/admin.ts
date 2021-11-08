@@ -20,12 +20,14 @@ export class Admin {
     );
     return response.data.token as string;
   }
+
   async getAvailableFunctions({ customerId, namespace }: Runnable) {
     const response = await axios.get(
       `${this.baseUrl}/functions/${customerId}/${namespace}`
     );
     return response.data;
   }
+
   async getFunctionResults({
     environment,
     customerId,
@@ -38,6 +40,7 @@ export class Admin {
     );
     return response.data;
   }
+
   async getFunctionErrors({
     environment,
     customerId,
