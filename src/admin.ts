@@ -1,5 +1,9 @@
 import axios from "axios";
-import { Runnable, VersionedRunnable } from "./types/runnable";
+import {
+  Runnable,
+  VersionedRunnable,
+  UserFunctionsParams,
+} from "./types/runnable";
 
 interface AdminConfig {
   baseUrl?: string;
@@ -57,7 +61,7 @@ export class Admin {
     return response.data.token as string;
   }
 
-  async getAvailableFunctions({ customerId, namespace }: Runnable) {
+  async getFunctions({ customerId, namespace }: UserFunctionsParams) {
     const response = await axios.get(
       `${this.baseUrl}/functions/${customerId}/${namespace}`
     );
