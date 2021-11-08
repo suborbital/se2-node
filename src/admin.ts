@@ -24,7 +24,6 @@ export class Admin {
     const response = await axios.get(
       `${this.baseUrl}/functions/${customerId}/${namespace}`
     );
-    console.log("Avail func object " + response.data);
     return response.data;
   }
   async getFunctionResults({
