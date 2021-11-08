@@ -16,11 +16,19 @@ export class Exec {
 
   async run(
     { environment, customerId, namespace, fnName, version }: VersionedRunnable,
-    input: ArrayBuffer
+    input: String | ArrayBuffer | object
   ) {
+    let buffer;
+    if (typeof input === "string") {
+      buffer = new TextEncoder().encode(input).buffer;
+    } else if (input instanceof ArrayBuffer) {
+      buffer = input;
+    } else {
+      buffer = new TextEncoder().encode(JSON.stringify(input)).buffer;
+    }
     const response = await axios.post(
       `${this.baseUrl}/${environment}.${customerId}/${namespace}/${fnName}/${version}`,
-      input
+      buffer
     );
     return response.data as ArrayBuffer;
   }
