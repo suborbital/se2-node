@@ -5,6 +5,11 @@ export interface Runnable {
   fnName: string;
 }
 
+export interface UserFunctionsParams {
+  customerId: string;
+  namespace: string;
+}
+
 export interface VersionedRunnable extends Runnable {
   version: string;
 }
