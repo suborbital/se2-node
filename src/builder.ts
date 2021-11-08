@@ -33,7 +33,7 @@ export class Builder {
     const response = await axios.post(
       `${this.baseUrl}/api/v1/build/${language}/${environment}.${customerId}/${namespace}/${fnName}`,
       body,
-      { headers: { Authorization: `Bearer ${token}` } }
+      { headers: { Authorization: `bearer ${token}` } }
     );
     return response.data as BuildResponse;
   }
@@ -48,7 +48,7 @@ export class Builder {
     const response = await axios.post(
       `${this.baseUrl}/api/v1/draft/${environment}.${customerId}/${namespace}/${fnName}/promote`,
       null,
-      { headers: { Authorization: `Bearer ${token}` } }
+      { headers: { Authorization: `bearer ${token}` } }
     );
     return response.data as string;
   }
