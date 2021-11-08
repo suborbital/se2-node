@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Runnable } from "./types/runnable";
+import { Runnable, VersionedRunnable } from "./types/runnable";
 
 interface AdminConfig {
   baseUrl?: string;
@@ -19,5 +19,36 @@ export class Admin {
       `${this.baseUrl}/token/${environment}.${customerId}/${namespace}/${fnName}`
     );
     return response.data.token as string;
+  }
+  async getAvailableFunctions({ customerId, namespace }: Runnable) {
+    const response = await axios.get(
+      `${this.baseUrl}/functions/${customerId}/${namespace}`
+    );
+    console.log("Avail func object " + response.data);
+    return response.data;
+  }
+  async getFunctionResults({
+    environment,
+    customerId,
+    namespace,
+    fnName,
+    version,
+  }: VersionedRunnable) {
+    const response = await axios.get(
+      `${this.baseUrl}/results/${environment}.${customerId}/${namespace}/${fnName}/${version}`
+    );
+    return response.data;
+  }
+  async getFunctionErrors({
+    environment,
+    customerId,
+    namespace,
+    fnName,
+    version,
+  }: VersionedRunnable) {
+    const response = await axios.get(
+      `${this.baseUrl}/errors/${environment}.${customerId}/${namespace}/${fnName}/${version}`
+    );
+    return response.data;
   }
 }
