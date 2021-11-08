@@ -5,6 +5,42 @@ interface AdminConfig {
   baseUrl?: string;
 }
 
+interface AvailableFunctions {
+  functions: Array<SingleAvailableFunction>;
+}
+
+interface SingleAvailableFunction {
+  name?: string;
+  namespace?: string;
+  lang?: string;
+  version?: string;
+  draftVersion?: string;
+  apiVersion?: string;
+  fqfn?: string;
+  fqfnURI?: string;
+}
+
+interface FunctionResults {
+  results: Array<SingleFunctionResult>;
+}
+
+interface SingleFunctionResult {
+  uuid: string;
+  timestamp: string;
+  response: string;
+}
+
+interface FunctionErrors {
+  errors: Array<SingleFunctionError>;
+}
+
+interface SingleFunctionError {
+  uuid: string;
+  timestamp: string;
+  code: string;
+  message: string;
+}
+
 export class Admin {
   private baseUrl: string;
 
@@ -25,7 +61,7 @@ export class Admin {
     const response = await axios.get(
       `${this.baseUrl}/functions/${customerId}/${namespace}`
     );
-    return response.data;
+    return response.data as AvailableFunctions;
   }
 
   async getFunctionResults({
@@ -38,7 +74,7 @@ export class Admin {
     const response = await axios.get(
       `${this.baseUrl}/results/${environment}.${customerId}/${namespace}/${fnName}/${version}`
     );
-    return response.data;
+    return response.data as FunctionResults;
   }
 
   async getFunctionErrors({
@@ -51,6 +87,6 @@ export class Admin {
     const response = await axios.get(
       `${this.baseUrl}/errors/${environment}.${customerId}/${namespace}/${fnName}/${version}`
     );
-    return response.data;
+    return response.data as FunctionErrors;
   }
 }
