@@ -6,7 +6,7 @@ interface AdminConfig {
 }
 
 interface AvailableFunctions {
-  functions: Array<SingleAvailableFunction>;
+  functions: SingleAvailableFunction[];
 }
 
 interface SingleAvailableFunction {
