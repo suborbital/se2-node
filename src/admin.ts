@@ -6,35 +6,35 @@ interface AdminConfig {
 }
 
 interface AvailableFunctions {
-  functions: Array<SingleAvailableFunction>;
+  functions: AvailableFunction[];
 }
 
-interface SingleAvailableFunction {
-  name?: string;
-  namespace?: string;
-  lang?: string;
-  version?: string;
-  draftVersion?: string;
-  apiVersion?: string;
-  fqfn?: string;
-  fqfnURI?: string;
+interface AvailableFunction {
+  name: string;
+  namespace: string;
+  lang: string;
+  version: string;
+  draftVersion: string;
+  apiVersion: string;
+  fqfn: string;
+  fqfnURI: string;
 }
 
 interface FunctionResults {
-  results: Array<SingleFunctionResult>;
+  results: FunctionResult[];
 }
 
-interface SingleFunctionResult {
+interface FunctionResult {
   uuid: string;
   timestamp: string;
   response: string;
 }
 
 interface FunctionErrors {
-  errors: Array<SingleFunctionError>;
+  errors: FunctionError[];
 }
 
-interface SingleFunctionError {
+interface FunctionError {
   uuid: string;
   timestamp: string;
   code: string;
