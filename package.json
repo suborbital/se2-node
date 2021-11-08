@@ -1,0 +1,29 @@
+{
+  "name": "@suborbital/compute",
+  "version": "0.1.0",
+  "description": "SDK for interacting with the Suborbital Compute Network",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc --project .",
+    "format": "prettier . --write",
+    "check-format": "prettier . --check",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/suborbital/compute-node.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/suborbital/compute-node/issues"
+  },
+  "homepage": "https://github.com/suborbital/compute-node#readme",
+  "devDependencies": {
+    "prettier": "^2.4.1",
+    "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "axios": "^0.24.0"
+  }
+}
