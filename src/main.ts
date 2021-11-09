@@ -3,13 +3,13 @@ import { Builder } from "./builder";
 import { Exec } from "./exec";
 
 export class Suborbital {
-  readonly Admin: Admin;
-  readonly Builder: Builder;
-  readonly Exec: Exec;
+  readonly admin: Admin;
+  readonly builder: Builder;
+  readonly exec: Exec;
 
   constructor() {
-    this.Admin = new Admin({});
-    this.Builder = new Builder({});
-    this.Exec = new Exec({});
+    this.admin = new Admin({});
+    this.builder = new Builder({});
+    this.exec = new Exec({});
   }
 }
