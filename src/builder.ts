@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BuildableRunnale, AuthenticatedRunnable } from "./types/runnable";
+import { BuildableRunnable, AuthenticatedRunnable } from "./types/runnable";
 
 interface BuilderConfig {
   baseUrl?: string;
@@ -31,7 +31,7 @@ export class Builder {
       fnName,
       language,
       token,
-    }: BuildableRunnale,
+    }: BuildableRunnable,
     body: string
   ) {
     const response = await axios.post(
@@ -57,7 +57,7 @@ export class Builder {
     return response.data as DeployDraftResponse;
   }
 
-  async getTemplate({ fnName, language }: BuildableRunnale) {
+  async getTemplate({ fnName, language }: BuildableRunnable) {
     const response = await axios.get(
       `${this.baseUrl}/api/v2/template/${language}/${fnName}`
     );
