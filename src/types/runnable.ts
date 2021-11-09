@@ -18,6 +18,6 @@ export interface AuthenticatedRunnable extends Runnable {
   token: string;
 }
 
-export interface BuildableRunnale extends AuthenticatedRunnable {
+export interface BuildableRunnable extends AuthenticatedRunnable {
   language: string;
 }
