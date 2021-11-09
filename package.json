@@ -7,7 +7,7 @@
     "build": "tsc --project .",
     "format": "prettier . --write",
     "check-format": "prettier . --check",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run build && node dist/test/smoke.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/suborbital/compute-node#readme",
   "devDependencies": {
+    "@types/node": "^16.11.7",
     "prettier": "^2.4.1",
     "typescript": "^4.4.4"
   },
