@@ -1,3 +1,9 @@
+<p align="center">
+    <a href="https://suborbital.dev/">
+        <img src="suborbital-logo.png" alt="Grain" height="200" />
+    </a>
+</p>
+
 # Suborbital Compute JavaScript SDK
 
 This SDK provides an easy way to interact with the Suborbital Compute API from JavaScript or TypeScript.
