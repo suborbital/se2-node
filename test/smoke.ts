@@ -1,6 +1,6 @@
-import { Suborbital } from "../src/main";
+import { Suborbital, localConfig } from "../src/main";
 
-const suborbital = new Suborbital();
+const suborbital = new Suborbital(localConfig);
 
 async function e2e() {
   try {
@@ -24,7 +24,9 @@ async function e2e() {
     const buildResult = await suborbital.builder.build(buildParams, template);
     if (buildResult.succeeded) {
       console.log("Function built successfully.");
+
       const deployResult = await suborbital.builder.deployDraft(buildParams);
+      console.log("Deployed version", deployResult.version);
 
       console.log("Executing function with string input:");
       let result = await suborbital.exec.run(

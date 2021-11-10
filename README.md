@@ -24,11 +24,39 @@ npm install @suborbital/compute
 
 ## Usage
 
+Start by instantiating the client:
+
 ```ts
 import { Suborbital } from "@suborbital/compute";
 
 const suborbital = new Suborbital();
+```
 
+The URIs for each of the APIs can be configured, if different than the defaults:
+
+```ts
+import { Suborbital } from "@suborbital/compute";
+
+const config = {
+  adminUri: "https://acme.co:8081",
+  execUri: "https://acme.co:8080",
+  builderUri: "https://acme.co/builder",
+};
+
+const suborbital = new Suborbital(config);
+```
+
+A configuration for a locally-deployed Suborbital Compute Network is also available:
+
+```ts
+import { Suborbital, localConfig } from "@suborbital/compute";
+
+const suborbital = new Suborbital(localConfig);
+```
+
+Then access endpoints on their respective sub-clients:
+
+```ts
 async function runFunction() {
   const result = await suborbital.exec.run({
     environment: "com.acmeco",

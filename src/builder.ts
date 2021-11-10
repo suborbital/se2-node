@@ -14,12 +14,12 @@ interface DeployDraftResponse {
   version: string;
 }
 
+const BUILDER_URI = "";
+
 export class Builder {
   private baseUrl: string;
 
-  constructor({
-    baseUrl = "http://local.suborbital.network:8082",
-  }: BuilderConfig) {
+  constructor({ baseUrl = BUILDER_URI }: BuilderConfig) {
     this.baseUrl = baseUrl;
   }
 
