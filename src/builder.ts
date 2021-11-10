@@ -14,12 +14,13 @@ interface DeployDraftResponse {
   version: string;
 }
 
+const BUILDER_URI =
+  "http://scc-controlplane-service.suborbital.svc.cluster.local:8082";
+
 export class Builder {
   private baseUrl: string;
 
-  constructor({
-    baseUrl = "http://local.suborbital.network:8082",
-  }: BuilderConfig) {
+  constructor({ baseUrl = BUILDER_URI }: BuilderConfig) {
     this.baseUrl = baseUrl;
   }
 

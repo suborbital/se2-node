@@ -45,25 +45,26 @@ interface FunctionError {
   message: string;
 }
 
+const ADMIN_URI =
+  "http://scc-controlplane-service.suborbital.svc.cluster.local:8081";
+
 export class Admin {
   private baseUrl: string;
 
-  constructor({
-    baseUrl = "http://local.suborbital.network:8081/api/v1",
-  }: AdminConfig) {
+  constructor({ baseUrl = ADMIN_URI }: AdminConfig) {
     this.baseUrl = baseUrl;
   }
 
   async getToken({ environment, customerId, namespace, fnName }: Runnable) {
     const response = await axios.get(
-      `${this.baseUrl}/token/${environment}.${customerId}/${namespace}/${fnName}`
+      `${this.baseUrl}/api/v1/token/${environment}.${customerId}/${namespace}/${fnName}`
     );
     return response.data.token as string;
   }
 
   async getFunctions({ customerId, namespace }: UserFunctionsParams) {
     const response = await axios.get(
-      `${this.baseUrl}/functions/${customerId}/${namespace}`
+      `${this.baseUrl}/api/v1/functions/${customerId}/${namespace}`
     );
     return response.data as AvailableFunctions;
   }
@@ -76,7 +77,7 @@ export class Admin {
     version,
   }: VersionedRunnable) {
     const response = await axios.get(
-      `${this.baseUrl}/results/${environment}.${customerId}/${namespace}/${fnName}/${version}`
+      `${this.baseUrl}/api/v1/results/${environment}.${customerId}/${namespace}/${fnName}/${version}`
     );
     return response.data as FunctionResults;
   }
@@ -89,7 +90,7 @@ export class Admin {
     version,
   }: VersionedRunnable) {
     const response = await axios.get(
-      `${this.baseUrl}/errors/${environment}.${customerId}/${namespace}/${fnName}/${version}`
+      `${this.baseUrl}/api/v1/errors/${environment}.${customerId}/${namespace}/${fnName}/${version}`
     );
     return response.data as FunctionErrors;
   }

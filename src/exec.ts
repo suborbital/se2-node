@@ -5,12 +5,12 @@ interface ExecConfig {
   baseUrl?: string;
 }
 
+const EXEC_URI = "http://scc-atmo-service.suborbital.svc.cluster.local";
+
 export class Exec {
   private baseUrl: string;
 
-  constructor({
-    baseUrl = "http://local.suborbital.network:8080",
-  }: ExecConfig) {
+  constructor({ baseUrl = EXEC_URI }: ExecConfig) {
     this.baseUrl = baseUrl;
   }
 
