@@ -14,7 +14,8 @@ interface DeployDraftResponse {
   version: string;
 }
 
-const BUILDER_URI = "";
+const BUILDER_URI =
+  "http://scc-controlplane-service.suborbital.svc.cluster.local:8082";
 
 export class Builder {
   private baseUrl: string;

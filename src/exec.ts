@@ -5,7 +5,7 @@ interface ExecConfig {
   baseUrl?: string;
 }
 
-const EXEC_URI = "http://scc-atmo-service.suborbital.svc.cluster.local:8080";
+const EXEC_URI = "http://scc-atmo-service.suborbital.svc.cluster.local";
 
 export class Exec {
   private baseUrl: string;
