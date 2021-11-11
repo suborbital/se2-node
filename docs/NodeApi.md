@@ -1,28 +1,18 @@
-<p align="center">
-    <a href="https://suborbital.dev/">
-        <img src="suborbital-logo.png" alt="Suborbital" height="200" />
-    </a>
-</p>
-
 # Getting Started Guide: Client Libraries for Compute
 
 The guide for how to use the typescript client library for Suborbital Compute.
 
 ## Overview
 
-This API client was created to make it easier for you to interact with Compute's API's. There are three main API's in Compute:
+This API client was created to make it easier for you to interact with Compute's API's.
 
-[Administrative](https://docs.suborbital.dev/connect-your-application/administrative-api) - designed to help you and your users view, manage, and organize their functions.
-
-[Builder](https://docs.suborbital.dev/building-functions/builder-api) - can build TypeScript (AssemblyScript) and Rust functions.
-
-[Execution](https://docs.suborbital.dev/connect-your-application/execution-api) - used by your application servers to execute the functions your users have built.
+Today we are going to take you through the steps to use our library to interact with our api's. There are three main Api's [Administrative](https://docs.suborbital.dev/connect-your-application/administrative-api), [Builder](https://docs.suborbital.dev/building-functions/builder-api), and [Execution](https://docs.suborbital.dev/connect-your-application/execution-api) which have pretty extensive documentation and use cases. However, for this guide, we'll chose one method from the Administrative API (`getFunctions` to be exact) and one from the Execution API (`run`).
 
 ## Installation
 
-Before you can begin writing functions using this library, you will need to have Suborbital Compute running (locally or through your cloud provider of choice) on your computer. Follow the [Compute Setup Guide]("https://docs.suborbital.dev") to complete that process.
+In order to get started using this library, we need to first ensure we have Suborbital Compute running (locally or through a cloud provider of choice) on your computer. Follow the [Compute Setup Guide]("https://docs.suborbital.dev") to complete that process.
 
-Once you have Compute running, you can install this library to help interact with our APIs.
+Once we have Compute running, we can install this library to help interact with our APIs.
 
 Run the following via `yarn` or `npm`:
 
@@ -36,7 +26,7 @@ OR:
 $npm install @suborbital/compute
 ```
 
-Next, its time to set up the file you will be using to interact with our API's. If you installed Compute locally, then the top of your file will look like this (where the local config settings are already set within our lib):
+Next, its time to set up the file we will be using to interact with our API's. If we installed Compute locally, then the top of our file will look like this (where the local config settings are already set within our lib):
 
 ```typescript
 import { Suborbital, localConfig } from "@suborbital/compute";
@@ -44,10 +34,10 @@ import { Suborbital, localConfig } from "@suborbital/compute";
 const suborbital = new Suborbital(localConfig);
 ```
 
-If you did not install Compute locally, then import the lib at the top of your file and then set your specific configuration, if different from the defaults. :
+If we need the library to be used on a production environment for example or we need to use different ports other than the defaults set below, then we should configure those settings. Let's import the lib at the top of our file and then set our specific configuration urls/ports.
 
-```Typescript
-import { Suborbital } from "@suborbital/compute"
+```typescript
+import { Suborbital } from "@suborbital/compute";
 
 const suborbital = new Suborbital();
 
@@ -60,30 +50,13 @@ const configuration = {
 const suborbital = new Suborbital(configuration);
 ```
 
-Now we can move on to using our lib. Here is the full list of functions we can use to interact with our APIs:
+Now we can move on to using our lib.
 
-### Admin:
-
-suborbital.admin.getToken
-suborbital.admin.getFunctions
-suborbital.admin.getFunctionResults
-suborbital.admin.getFunctionErrors
-
-### Builder:
-
-suborbital.builder.build
-suborbital.builder.deployDraft
-suborbital.builder.getTemplate
-
-### Exec:
-
-suborbital.exec.run
-
-We will be using the `getFunctions` method in this guide as an example and `run` to execute that method.
+As stated above, we will be using the `getFunctions` method in this guide as an example and `run` to execute that method.
 
 The `getFunctions` method takes in a `customerId` and a `namespace` as parameters and returns a list of available functions for the given user in the given namespace.
 
-The `getFunctions` method would look something like this in your file:
+Let's create an asycnhronous function, name it, and then set a promise to the `getFunctions` method. That would look something like this in our file:
 
 ```typescript
 async function listAvailableFunctions() {
@@ -96,7 +69,7 @@ async function listAvailableFunctions() {
 }
 ```
 
-The response will look something like this:
+Once we run this code, we should get a response that looks something like this:
 
 ```json
 {
@@ -116,11 +89,13 @@ The response will look something like this:
 }
 ```
 
-Now that we have gotten a list of available functions, we now have to execute one of those functions.To do this we will use the `run` execution method from the Execution API.
+Note this is exactly what should have returned from the `getFunctions` method, a list of available functions for the given user in the given namespace.
 
-The execution API specifically is used by your application servers to execute the one of the functions.
+Now that we have gotten this list of available functions, we now have to execute one of those functions. To do this we will use the `run` execution method from the Execution API.
 
-Let's take the first function above named `foo` and execute it. You'll see that you specify the function name `fnName` in the parameters to the `run` method along with the 4 other parameters: environment, customerId, namespace, and version. An example is below:
+The `run` method executes the given function, with the provided body, params and state loaded into the function at runtime.
+
+Let's take the function `foo` returned from the response above and execute it. You'll see that we specify the function name `fnName` in the parameters to the `run` method along with the 4 other parameters: environment, customerId, namespace, and version. That would look something like this:
 
 ```typescript
 async function runFunction() {
@@ -145,4 +120,25 @@ Once we run this code, we should either get a 200 response code with the bytes p
 }
 ```
 
-That's all! Now you know how to fully interact with all of our APi's using our the Suborbital Typescript Client Library. Now you can try calling our api's using the other methods listed above.
+That's all! We have successfully used this typescript library to interact with a few of our API's. If you'd like to interact with all of our API's, you can use any of the methods below to do so.
+
+Now you can try calling our api's using the other methods listed below.
+
+### Admin:
+
+suborbital.admin.getToken
+suborbital.admin.getFunctions
+suborbital.admin.getFunctionResults
+suborbital.admin.getFunctionErrors
+
+### Builder:
+
+suborbital.builder.build
+suborbital.builder.deployDraft
+suborbital.builder.getTemplate
+
+### Exec:
+
+suborbital.exec.run
+
+Happy coding!
