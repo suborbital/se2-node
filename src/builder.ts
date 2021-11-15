@@ -27,7 +27,7 @@ export class Builder {
   async build(
     {
       environment,
-      customerId,
+      userId,
       namespace,
       fnName,
       language,
@@ -36,7 +36,7 @@ export class Builder {
     body: string
   ) {
     const response = await axios.post(
-      `${this.baseUrl}/api/v1/build/${language}/${environment}.${customerId}/${namespace}/${fnName}`,
+      `${this.baseUrl}/api/v1/build/${language}/${environment}.${userId}/${namespace}/${fnName}`,
       body,
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -45,13 +45,13 @@ export class Builder {
 
   async deployDraft({
     environment,
-    customerId,
+    userId,
     namespace,
     fnName,
     token,
   }: AuthenticatedRunnable) {
     const response = await axios.post(
-      `${this.baseUrl}/api/v1/draft/${environment}.${customerId}/${namespace}/${fnName}/promote`,
+      `${this.baseUrl}/api/v1/draft/${environment}.${userId}/${namespace}/${fnName}/promote`,
       null,
       { headers: { Authorization: `Bearer ${token}` } }
     );

@@ -1,12 +1,12 @@
 export interface Runnable {
   environment: string;
-  customerId: string;
+  userId: string;
   namespace: string;
   fnName: string;
 }
 
 export interface UserFunctionsParams {
-  customerId: string;
+  userId: string;
   namespace: string;
 }
 

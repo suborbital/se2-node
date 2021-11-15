@@ -60,7 +60,7 @@ Then access endpoints on their respective sub-clients:
 async function runFunction() {
   const result = await suborbital.exec.run({
     environment: "com.acmeco",
-    customerId: "1234",
+    userId: "1234",
     namespace: "default",
     fnName: "foo",
     version: "v1.0.0",
