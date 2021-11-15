@@ -55,42 +55,42 @@ export class Admin {
     this.baseUrl = baseUrl;
   }
 
-  async getToken({ environment, customerId, namespace, fnName }: Runnable) {
+  async getToken({ environment, userId, namespace, fnName }: Runnable) {
     const response = await axios.get(
-      `${this.baseUrl}/api/v1/token/${environment}.${customerId}/${namespace}/${fnName}`
+      `${this.baseUrl}/api/v1/token/${environment}.${userId}/${namespace}/${fnName}`
     );
     return response.data.token as string;
   }
 
-  async getFunctions({ customerId, namespace }: UserFunctionsParams) {
+  async getFunctions({ userId, namespace }: UserFunctionsParams) {
     const response = await axios.get(
-      `${this.baseUrl}/api/v1/functions/${customerId}/${namespace}`
+      `${this.baseUrl}/api/v1/functions/${userId}/${namespace}`
     );
     return response.data as AvailableFunctions;
   }
 
   async getFunctionResults({
     environment,
-    customerId,
+    userId,
     namespace,
     fnName,
     version,
   }: VersionedRunnable) {
     const response = await axios.get(
-      `${this.baseUrl}/api/v1/results/${environment}.${customerId}/${namespace}/${fnName}/${version}`
+      `${this.baseUrl}/api/v1/results/${environment}.${userId}/${namespace}/${fnName}/${version}`
     );
     return response.data as FunctionResults;
   }
 
   async getFunctionErrors({
     environment,
-    customerId,
+    userId,
     namespace,
     fnName,
     version,
   }: VersionedRunnable) {
     const response = await axios.get(
-      `${this.baseUrl}/api/v1/errors/${environment}.${customerId}/${namespace}/${fnName}/${version}`
+      `${this.baseUrl}/api/v1/errors/${environment}.${userId}/${namespace}/${fnName}/${version}`
     );
     return response.data as FunctionErrors;
   }

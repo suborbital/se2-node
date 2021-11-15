@@ -8,7 +8,7 @@ async function e2e() {
 
     const params = {
       environment: "dev.suborbital",
-      customerId: "bigco",
+      userId: "bigco",
       namespace: "default",
       fnName: "foo",
     };

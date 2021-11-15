@@ -15,7 +15,7 @@ export class Exec {
   }
 
   async run(
-    { environment, customerId, namespace, fnName, version }: VersionedRunnable,
+    { environment, userId, namespace, fnName, version }: VersionedRunnable,
     input: String | ArrayBuffer | object
   ) {
     let buffer;
@@ -27,7 +27,7 @@ export class Exec {
       buffer = new TextEncoder().encode(JSON.stringify(input)).buffer;
     }
     const response = await axios.post(
-      `${this.baseUrl}/${environment}.${customerId}/${namespace}/${fnName}/${version}`,
+      `${this.baseUrl}/${environment}.${userId}/${namespace}/${fnName}/${version}`,
       buffer
     );
     return response.data as ArrayBuffer;
