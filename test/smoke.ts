@@ -25,6 +25,16 @@ async function e2e() {
     if (buildResult.succeeded) {
       console.log("Function built successfully.");
 
+      const testResult = await suborbital.builder.testDraft(
+        buildParams,
+        "tester"
+      );
+      if (testResult.includes("hey there, tester")) {
+        console.log("Function tested successfuly");
+      } else {
+        throw new Error("Function test failed");
+      }
+
       const deployResult = await suborbital.builder.deployDraft(buildParams);
       console.log("Deployed version", deployResult.version);
 

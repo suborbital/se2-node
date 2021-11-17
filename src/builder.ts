@@ -69,6 +69,26 @@ export class Builder {
     return response.data as EditorState;
   }
 
+  async testDraft(
+    { environment, userId, namespace, fnName, token }: AuthenticatedRunnable,
+    input: String | ArrayBuffer | object
+  ) {
+    let buffer;
+    if (typeof input === "string") {
+      buffer = new TextEncoder().encode(input).buffer;
+    } else if (input instanceof ArrayBuffer) {
+      buffer = input;
+    } else {
+      buffer = new TextEncoder().encode(JSON.stringify(input)).buffer;
+    }
+    const response = await axios.post(
+      `${this.baseUrl}/api/v1/test/${environment}.${userId}/${namespace}/${fnName}`,
+      buffer,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data.result as string;
+  }
+
   async deployDraft({
     environment,
     userId,
