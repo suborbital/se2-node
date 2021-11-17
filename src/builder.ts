@@ -10,6 +10,18 @@ interface BuildResponse {
   outputLog: string;
 }
 
+interface TestPayload {
+  name: string;
+  description: string;
+  payload: string;
+}
+
+interface EditorState {
+  lang: string;
+  contents: string;
+  tests: TestPayload[];
+}
+
 interface DeployDraftResponse {
   version: string;
 }
@@ -41,6 +53,20 @@ export class Builder {
       { headers: { Authorization: `Bearer ${token}` } }
     );
     return response.data as BuildResponse;
+  }
+
+  async getDraft({
+    environment,
+    userId,
+    namespace,
+    fnName,
+    token,
+  }: AuthenticatedRunnable) {
+    const response = await axios.get(
+      `${this.baseUrl}/api/v1/draft/${environment}.${userId}/${namespace}/${fnName}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data as EditorState;
   }
 
   async deployDraft({
