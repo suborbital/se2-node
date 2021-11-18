@@ -3,15 +3,18 @@ import { VersionedRunnable } from "./types/runnable";
 
 interface ExecConfig {
   baseUrl?: string;
+  envToken: string;
 }
 
 const EXEC_URI = "http://scc-atmo-service.suborbital.svc.cluster.local";
 
 export class Exec {
   private baseUrl: string;
+  private envToken: string;
 
-  constructor({ baseUrl = EXEC_URI }: ExecConfig) {
+  constructor({ baseUrl = EXEC_URI, envToken }: ExecConfig) {
     this.baseUrl = baseUrl;
+    this.envToken = envToken;
   }
 
   async run(
@@ -28,7 +31,12 @@ export class Exec {
     }
     const response = await axios.post(
       `${this.baseUrl}/${environment}.${userId}/${namespace}/${fnName}/${version}`,
-      buffer
+      buffer,
+      {
+        headers: {
+          Authorization: `Bearer ${this.envToken}`,
+        },
+      }
     );
     return response.data as ArrayBuffer;
   }

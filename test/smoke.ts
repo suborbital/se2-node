@@ -1,6 +1,6 @@
-import { Suborbital, localConfig } from "../src/main";
+import { Suborbital, localUriConfig } from "../src/main";
 
-const suborbital = new Suborbital(localConfig);
+const suborbital = new Suborbital(process.env.SCC_ENV_TOKEN, localUriConfig);
 
 async function e2e() {
   try {
