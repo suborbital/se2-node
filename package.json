@@ -2,7 +2,7 @@
   "name": "@suborbital/compute",
   "version": "0.1.0",
   "description": "SDK for interacting with the Suborbital Compute Network",
-  "main": "dist/main.js",
+  "main": "dist/src/main.js",
   "scripts": {
     "build": "tsc --project .",
     "format": "prettier . --write",
