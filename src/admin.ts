@@ -4,6 +4,7 @@ import {
   VersionedRunnable,
   UserFunctionsParams,
 } from "./types/runnable";
+import uriencoded from "./util/uriencoded";
 
 interface AdminConfig {
   baseUrl?: string;
@@ -55,6 +56,7 @@ export class Admin {
     this.baseUrl = baseUrl;
   }
 
+  @uriencoded
   async getToken({ environment, userId, namespace, fnName }: Runnable) {
     const response = await axios.get(
       `${this.baseUrl}/api/v1/token/${environment}.${userId}/${namespace}/${fnName}`
@@ -62,6 +64,7 @@ export class Admin {
     return response.data.token as string;
   }
 
+  @uriencoded
   async getFunctions({ userId, namespace }: UserFunctionsParams) {
     const response = await axios.get(
       `${this.baseUrl}/api/v1/functions/${userId}/${namespace}`
@@ -69,6 +72,7 @@ export class Admin {
     return response.data as AvailableFunctions;
   }
 
+  @uriencoded
   async getFunctionResults({
     environment,
     userId,
@@ -82,6 +86,7 @@ export class Admin {
     return response.data as FunctionResults;
   }
 
+  @uriencoded
   async getFunctionErrors({
     environment,
     userId,

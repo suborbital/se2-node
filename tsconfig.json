@@ -3,7 +3,8 @@
     "module": "CommonJS",
     "target": "es2020",
     "declaration": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "experimentalDecorators": true
   },
   "include": ["src/**/*", "test/**/*"]
 }
