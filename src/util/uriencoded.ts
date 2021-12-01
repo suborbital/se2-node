@@ -1,8 +1,8 @@
-export default function uriencoded(
+export default function uriencoded<Args, Result>(
   target: Object,
   propertyKey: string,
-  descriptor: TypedPropertyDescriptor<any>
-) {
+  descriptor: TypedPropertyDescriptor<(arg1: object, ...rest: Args[]) => Result>
+): TypedPropertyDescriptor<(arg1: object, ...rest: Args[]) => Result> {
   const originalMethod = descriptor.value;
   descriptor.value = function (arg1: any, ...args: any[]) {
     if (typeof arg1 == "object") {
