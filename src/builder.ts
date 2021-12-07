@@ -1,5 +1,6 @@
 import axios from "axios";
 import { BuildableRunnable, AuthenticatedRunnable } from "./types/runnable";
+import uriencoded from "./util/uriencoded";
 
 interface BuilderConfig {
   baseUrl?: string;
@@ -36,6 +37,7 @@ export class Builder {
     this.baseUrl = baseUrl;
   }
 
+  @uriencoded
   async build(
     {
       environment,
@@ -55,6 +57,7 @@ export class Builder {
     return response.data as BuildResponse;
   }
 
+  @uriencoded
   async getDraft({
     environment,
     userId,
@@ -69,6 +72,7 @@ export class Builder {
     return response.data as EditorState;
   }
 
+  @uriencoded
   async testDraft(
     { environment, userId, namespace, fnName, token }: AuthenticatedRunnable,
     input: String | ArrayBuffer | object
@@ -89,6 +93,7 @@ export class Builder {
     return response.data.result as string;
   }
 
+  @uriencoded
   async deployDraft({
     environment,
     userId,
@@ -104,6 +109,7 @@ export class Builder {
     return response.data as DeployDraftResponse;
   }
 
+  @uriencoded
   async getTemplate({ fnName, language }: BuildableRunnable) {
     const response = await axios.get(
       `${this.baseUrl}/api/v2/template/${language}/${fnName}`

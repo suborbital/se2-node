@@ -1,5 +1,6 @@
 import axios from "axios";
 import { VersionedRunnable } from "./types/runnable";
+import uriencoded from "./util/uriencoded";
 
 interface ExecConfig {
   baseUrl?: string;
@@ -17,6 +18,7 @@ export class Exec {
     this.envToken = envToken;
   }
 
+  @uriencoded
   async run(
     { environment, userId, namespace, fnName, version }: VersionedRunnable,
     input: String | ArrayBuffer | object
