@@ -1,6 +1,6 @@
 {
   "name": "@suborbital/compute",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "SDK for interacting with the Suborbital Compute Network",
   "main": "dist/src/main.js",
   "scripts": {
