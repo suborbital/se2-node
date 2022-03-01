@@ -9,6 +9,11 @@ interface ExecConfig {
 
 const EXEC_URI = "http://scc-atmo-service.suborbital.svc.cluster.local";
 
+interface ExecutionResult {
+  result: ArrayBuffer;
+  uuid: string;
+}
+
 export class Exec {
   private baseUrl: string;
   private envToken: string;
@@ -22,7 +27,7 @@ export class Exec {
   async run(
     { environment, userId, namespace, fnName, version }: VersionedRunnable,
     input: String | ArrayBuffer | object
-  ) {
+  ): Promise<ExecutionResult> {
     let buffer;
     if (typeof input === "string") {
       buffer = new TextEncoder().encode(input).buffer;
@@ -40,6 +45,9 @@ export class Exec {
         },
       }
     );
-    return response.data as ArrayBuffer;
+    return {
+      result: response.data,
+      uuid: response.headers["x-atmo-requestid"],
+    };
   }
 }
