@@ -6,6 +6,7 @@ export interface Runnable {
 }
 
 export interface UserFunctionsParams {
+  environment: string;
   userId: string;
   namespace: string;
 }
