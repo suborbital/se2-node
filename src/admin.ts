@@ -32,18 +32,11 @@ interface FunctionResults {
 interface FunctionResult {
   uuid: string;
   timestamp: string;
-  response: string;
-}
-
-interface FunctionErrors {
-  errors: FunctionError[];
-}
-
-interface FunctionError {
-  uuid: string;
-  timestamp: string;
-  code: string;
-  message: string;
+  success: boolean;
+  error: {
+    code?: number;
+    message?: string;
+  };
 }
 
 const ADMIN_URI =
@@ -73,7 +66,7 @@ export class Admin {
   }
 
   @uriencoded
-  async getFunctionResults({
+  async getFunctionResultsMetadata({
     environment,
     userId,
     namespace,
@@ -81,22 +74,22 @@ export class Admin {
     version,
   }: VersionedRunnable) {
     const response = await axios.get(
-      `${this.baseUrl}/api/v1/results/${environment}.${userId}/${namespace}/${fnName}/${version}`
+      `${this.baseUrl}/api/v2/results/by-fqfn/${environment}.${userId}/${namespace}/${fnName}/${version}`
     );
     return response.data as FunctionResults;
   }
 
   @uriencoded
-  async getFunctionErrors({
-    environment,
-    userId,
-    namespace,
-    fnName,
-    version,
-  }: VersionedRunnable) {
+  async getFunctionResultMetadata({ uuid }: { uuid: string }) {
     const response = await axios.get(
-      `${this.baseUrl}/api/v1/errors/${environment}.${userId}/${namespace}/${fnName}/${version}`
+      `${this.baseUrl}/api/v2/results/by-uuid/${uuid}`
     );
-    return response.data as FunctionErrors;
+    return response.data as FunctionResult;
+  }
+
+  @uriencoded
+  async getFunctionResult({ uuid }: { uuid: string }) {
+    const response = await axios.get(`${this.baseUrl}/api/v2/result/${uuid}`);
+    return response.data;
   }
 }

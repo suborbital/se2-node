@@ -2,6 +2,12 @@ import { Suborbital, localUriConfig } from "../src/main";
 
 const suborbital = new Suborbital(process.env.SCC_ENV_TOKEN, localUriConfig);
 
+async function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 async function e2e() {
   try {
     console.log("Running end-to-end test.\n");
@@ -41,26 +47,38 @@ async function e2e() {
       const deployResult = await suborbital.builder.deployDraft(buildParams);
       console.log("Deployed version", deployResult.version);
 
+      const fullParams = { ...params, version: deployResult.version };
+
       console.log("Executing function with string input:");
-      let result = await suborbital.exec.run(
-        { ...params, version: deployResult.version },
-        "tester!"
-      );
-      console.log(result);
+      let result = await suborbital.exec.run(fullParams, "tester!");
+      console.log(result.result);
 
       console.log("Executing function with JSON object input:");
-      result = await suborbital.exec.run(
-        { ...params, version: deployResult.version },
-        { my: { json: "object" } }
-      );
-      console.log(result);
+      result = await suborbital.exec.run(fullParams, {
+        my: { json: "object" },
+      });
+      console.log(result.result);
 
       console.log("Executing function with ArrayBuffer input:");
       result = await suborbital.exec.run(
-        { ...params, version: deployResult.version },
+        fullParams,
         new TextEncoder().encode("UTF-8-encoded text!").buffer
       );
-      console.log(result);
+      console.log(result.result);
+
+      await sleep(1000);
+
+      console.log("Fetching function result metadata");
+      let results = await suborbital.admin.getFunctionResultsMetadata(
+        fullParams
+      );
+      console.log(results);
+
+      console.log("Fetch single function result:");
+      let singleResult = await suborbital.admin.getFunctionResult({
+        uuid: result.uuid,
+      });
+      console.log(singleResult);
     } else {
       console.error("Failed to build function.");
       process.exit(1);
