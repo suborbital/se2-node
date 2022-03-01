@@ -65,9 +65,9 @@ export class Admin {
   }
 
   @uriencoded
-  async getFunctions({ userId, namespace }: UserFunctionsParams) {
+  async getFunctions({ environment, userId, namespace }: UserFunctionsParams) {
     const response = await axios.get(
-      `${this.baseUrl}/api/v1/functions/${userId}/${namespace}`
+      `${this.baseUrl}/api/v2/functions/${environment}.${userId}/${namespace}`
     );
     return response.data as AvailableFunctions;
   }

@@ -29,11 +29,14 @@ async function e2e() {
         buildParams,
         "tester"
       );
-      if (testResult.includes("hey there, tester")) {
+      if (testResult.includes("hello, tester")) {
         console.log("Function tested successfuly");
       } else {
         throw new Error("Function test failed");
       }
+
+      const allFunctions = await suborbital.admin.getFunctions(buildParams);
+      console.log("All functions:", allFunctions);
 
       const deployResult = await suborbital.builder.deployDraft(buildParams);
       console.log("Deployed version", deployResult.version);
