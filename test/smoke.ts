@@ -12,6 +12,9 @@ async function e2e() {
   try {
     console.log("Running end-to-end test.\n");
 
+    const features = await suborbital.builder.getFeatures();
+    console.log(features);
+
     const params = {
       environment: "dev.suborbital",
       userId: "bigco",
