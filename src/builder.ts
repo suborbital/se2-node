@@ -27,6 +27,11 @@ interface DeployDraftResponse {
   version: string;
 }
 
+interface Features {
+  features: string[];
+  languages: { short: string; pretty: string; identifier: string }[];
+}
+
 const BUILDER_URI =
   "http://scc-controlplane-service.suborbital.svc.cluster.local:8082";
 
@@ -115,5 +120,10 @@ export class Builder {
       `${this.baseUrl}/api/v2/template/${language}/${fnName}`
     );
     return response.data.contents as string;
+  }
+
+  async getFeatures() {
+    const response = await axios.get(`${this.baseUrl}/api/v1/features`);
+    return response.data as Features;
   }
 }
