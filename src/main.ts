@@ -14,6 +14,18 @@ export const localUriConfig: SuborbitalUriConfig = {
   builderUri: "http://local.suborbital.network:8082",
 };
 
+/**
+ * Create a URI config for use in Kubernetes deployments.
+ * @param builderUri The URI for the builder used to build functions
+ */
+export const createK8sUriConfig: (string) => SuborbitalUriConfig = (
+  builderUri
+) => ({
+  adminUri: "http://scc-controlplane-service.suborbital.svc.cluster.local:8081",
+  execUri: "http://scc-atmo-service.suborbital.svc.cluster.local:80",
+  builderUri,
+});
+
 export class Suborbital {
   readonly admin: Admin;
   readonly exec: Exec;
