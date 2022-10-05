@@ -1,7 +1,7 @@
 {
-  "name": "@suborbital/compute",
+  "name": "@suborbital/se2",
   "version": "0.3.0",
-  "description": "SDK for interacting with the Suborbital Compute Network",
+  "description": "SDK for interacting with the Suborbital Extension Engine",
   "main": "dist/src/main.js",
   "scripts": {
     "build": "tsc --project .",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/suborbital/compute-node.git"
+    "url": "git+https://github.com/suborbital/se2-node.git"
   },
   "author": "",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/suborbital/compute-node/issues"
+    "url": "https://github.com/suborbital/se2-node/issues"
   },
-  "homepage": "https://github.com/suborbital/compute-node#readme",
+  "homepage": "https://github.com/suborbital/se2-node#readme",
   "devDependencies": {
     "@types/node": "^16.11.7",
     "prettier": "^2.4.1",
