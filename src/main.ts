@@ -14,6 +14,12 @@ export const localUriConfig: SuborbitalUriConfig = {
   builderUri: "http://local.suborbital.network:8082",
 };
 
+export const se2UriConfig: SuborbitalUriConfig = {
+  adminUri: "https://controlplane.stg.suborbital.network",
+  execUri: "https://edge.stg.suborbital.network",
+  builderUri: "https://builder.stg.suborbital.network",
+};
+
 export class Suborbital {
   readonly admin: Admin;
   readonly exec: Exec;
@@ -28,6 +34,6 @@ export class Suborbital {
 
     this.admin = new Admin({ baseUrl: adminUri });
     this.exec = new Exec({ baseUrl: execUri, envToken });
-    this.builder = new Builder({ baseUrl: builderUri });
+    this.builder = new Builder({ baseUrl: builderUri, envToken });
   }
 }

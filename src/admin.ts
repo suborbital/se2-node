@@ -51,10 +51,11 @@ export class Admin {
 
   @uriencoded
   async getToken({ environment, userId, namespace, fnName }: Runnable) {
-    const response = await axios.get(
-      `${this.baseUrl}/api/v1/token/${environment}.${userId}/${namespace}/${fnName}`
-    );
-    return response.data.token as string;
+    console.error('Deprecated! Please use builder.getToken(...) instead');
+
+    // There seems to be no easy way to make this a soft-deprecation
+    // because we don't have access to the builder here
+    return "?";
   }
 
   @uriencoded

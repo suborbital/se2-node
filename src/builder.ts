@@ -1,9 +1,10 @@
 import axios from "axios";
-import { BuildableRunnable, AuthenticatedRunnable } from "./types/runnable";
+import { Runnable, BuildableRunnable, BuildableTemplate, AuthenticatedRunnable } from "./types/runnable";
 import uriencoded from "./util/uriencoded";
 
 interface BuilderConfig {
   baseUrl?: string;
+  envToken: string;
 }
 
 interface BuildResponse {
@@ -37,9 +38,29 @@ const BUILDER_URI =
 
 export class Builder {
   private baseUrl: string;
+  private envToken: string;
 
-  constructor({ baseUrl = BUILDER_URI }: BuilderConfig) {
+  constructor({ baseUrl = BUILDER_URI, envToken }: BuilderConfig) {
     this.baseUrl = baseUrl;
+    this.envToken = envToken;
+  }
+
+  @uriencoded
+  async getToken({ environment, userId, namespace, fnName }: Runnable) {
+    const response = await axios.get(
+      `${this.baseUrl}/auth/v2/access/${environment}.${userId}/${namespace}/${fnName}`,
+      { headers: { Authorization: `Bearer ${this.envToken}` } }
+    );
+    return response.data.token as string;
+  }
+
+  getEditorUrl({ token, environment, userId, namespace = "default", template = "javascript", fnName }: BuildableTemplate) {
+    return "https://editor.suborbital.network/?token="+encodeURIComponent(token)
+      + "&builder="+encodeURIComponent(this.baseUrl)
+      + "&template="+encodeURIComponent(template)
+      + "&ident="+encodeURIComponent(environment+"."+userId)
+      + "&namespace="+encodeURIComponent(namespace)
+      + "&fn="+encodeURIComponent(fnName)
   }
 
   @uriencoded

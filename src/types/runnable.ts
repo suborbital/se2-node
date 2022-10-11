@@ -22,3 +22,7 @@ export interface AuthenticatedRunnable extends Runnable {
 export interface BuildableRunnable extends AuthenticatedRunnable {
   language: string;
 }
+
+export interface BuildableTemplate extends AuthenticatedRunnable {
+  template: string;
+}
