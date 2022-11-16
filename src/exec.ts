@@ -1,5 +1,5 @@
 import axios from "axios";
-import { VersionedRunnable } from "./types/runnable";
+import { Module } from "./types/module";
 import uriencoded from "./util/uriencoded";
 
 interface ExecConfig {
@@ -25,7 +25,7 @@ export class Exec {
 
   @uriencoded
   async run(
-    { environment, userId, namespace, fnName, version }: VersionedRunnable,
+    { environment, userId, namespace, fnName }: Module,
     input: String | ArrayBuffer | object
   ): Promise<ExecutionResult> {
     let buffer;
@@ -37,7 +37,7 @@ export class Exec {
       buffer = new TextEncoder().encode(JSON.stringify(input)).buffer;
     }
     const response = await axios.post(
-      `${this.baseUrl}/${environment}.${userId}/${namespace}/${fnName}/${version}`,
+      `${this.baseUrl}/name/${environment}.${userId}/${namespace}/${fnName}`,
       buffer,
       {
         headers: {
@@ -47,7 +47,30 @@ export class Exec {
     );
     return {
       result: response.data,
-      uuid: response.headers["x-atmo-requestid"],
+      uuid: response.headers["x-suborbital-requestid"],
+    };
+  }
+
+  async runRef(
+    ref: String,
+    input: String | ArrayBuffer | object
+  ): Promise<ExecutionResult> {
+    let buffer;
+    if (typeof input === "string") {
+      buffer = new TextEncoder().encode(input).buffer;
+    } else if (input instanceof ArrayBuffer) {
+      buffer = input;
+    } else {
+      buffer = new TextEncoder().encode(JSON.stringify(input)).buffer;
+    }
+    const response = await axios.post(`${this.baseUrl}/ref/${ref}`, buffer, {
+      headers: {
+        Authorization: `Bearer ${this.envToken}`,
+      },
+    });
+    return {
+      result: response.data,
+      uuid: response.headers["x-suborbital-requestid"],
     };
   }
 }

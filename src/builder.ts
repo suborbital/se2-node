@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BuildableRunnable, AuthenticatedRunnable } from "./types/runnable";
+import { BuildableModule, AuthenticatedModule } from "./types/module";
 import uriencoded from "./util/uriencoded";
 
 interface BuilderConfig {
@@ -51,7 +51,7 @@ export class Builder {
       fnName,
       language,
       token,
-    }: BuildableRunnable,
+    }: BuildableModule,
     body: string
   ) {
     const response = await axios.post(
@@ -69,7 +69,7 @@ export class Builder {
     namespace,
     fnName,
     token,
-  }: AuthenticatedRunnable) {
+  }: AuthenticatedModule) {
     const response = await axios.get(
       `${this.baseUrl}/api/v1/draft/${environment}.${userId}/${namespace}/${fnName}`,
       { headers: { Authorization: `Bearer ${token}` } }
@@ -79,7 +79,7 @@ export class Builder {
 
   @uriencoded
   async testDraft(
-    { environment, userId, namespace, fnName, token }: AuthenticatedRunnable,
+    { environment, userId, namespace, fnName, token }: AuthenticatedModule,
     input: String | ArrayBuffer | object
   ) {
     let buffer;
@@ -105,7 +105,7 @@ export class Builder {
     namespace,
     fnName,
     token,
-  }: AuthenticatedRunnable) {
+  }: AuthenticatedModule) {
     const response = await axios.post(
       `${this.baseUrl}/api/v1/draft/${environment}.${userId}/${namespace}/${fnName}/promote`,
       null,
@@ -115,7 +115,7 @@ export class Builder {
   }
 
   @uriencoded
-  async getTemplate({ fnName, language }: BuildableRunnable) {
+  async getTemplate({ fnName, language }: BuildableModule) {
     const response = await axios.get(
       `${this.baseUrl}/api/v2/template/${language}/${fnName}`
     );
