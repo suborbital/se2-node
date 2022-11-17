@@ -1,9 +1,5 @@
 import axios from "axios";
-import {
-  Runnable,
-  VersionedRunnable,
-  UserFunctionsParams,
-} from "./types/runnable";
+import { Module, VersionedModule, UserFunctionsParams } from "./types/module";
 import uriencoded from "./util/uriencoded";
 
 interface AdminConfig {
@@ -21,8 +17,8 @@ interface AvailableFunction {
   version: string;
   draftVersion: string;
   apiVersion: string;
-  fqfn: string;
-  fqfnURI: string;
+  fqmn: string;
+  uri: string;
 }
 
 interface FunctionResults {
@@ -50,7 +46,7 @@ export class Admin {
   }
 
   @uriencoded
-  async getToken({ environment, userId, namespace, fnName }: Runnable) {
+  async getToken({ environment, userId, namespace, fnName }: Module) {
     const response = await axios.get(
       `${this.baseUrl}/api/v1/token/${environment}.${userId}/${namespace}/${fnName}`
     );
@@ -71,10 +67,10 @@ export class Admin {
     userId,
     namespace,
     fnName,
-    version,
-  }: VersionedRunnable) {
+    ref,
+  }: VersionedModule) {
     const response = await axios.get(
-      `${this.baseUrl}/api/v2/results/by-fqfn/${environment}.${userId}/${namespace}/${fnName}/${version}`
+      `${this.baseUrl}/api/v2/results/by-fqmn/${environment}.${userId}/${namespace}/${fnName}/${ref}`
     );
     return response.data as FunctionResults;
   }

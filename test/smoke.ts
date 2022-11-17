@@ -50,30 +50,47 @@ async function e2e() {
       const deployResult = await suborbital.builder.deployDraft(buildParams);
       console.log("Deployed version", deployResult.version);
 
-      const fullParams = { ...params, version: deployResult.version };
-
-      console.log("Executing function with string input:");
-      let result = await suborbital.exec.run(fullParams, "tester!");
+      console.log("Executing function with string input by fqmn:");
+      let result = await suborbital.exec.run(params, "tester!");
       console.log(result.result);
 
-      console.log("Executing function with JSON object input:");
-      result = await suborbital.exec.run(fullParams, {
+      console.log("Executing function with JSON object input by fqmn:");
+      result = await suborbital.exec.run(params, {
         my: { json: "object" },
       });
       console.log(result.result);
 
-      console.log("Executing function with ArrayBuffer input:");
+      console.log("Executing function with ArrayBuffer input by fqmn:");
       result = await suborbital.exec.run(
-        fullParams,
+        params,
+        new TextEncoder().encode("UTF-8-encoded text!").buffer
+      );
+      console.log(result.result);
+
+      console.log("Executing function with string input by ref:");
+      result = await suborbital.exec.runRef(deployResult.version, "tester!");
+      console.log(result.result);
+
+      console.log("Executing function with JSON object input by ref:");
+      result = await suborbital.exec.runRef(deployResult.version, {
+        my: { json: "object" },
+      });
+      console.log(result.result);
+
+      console.log("Executing function with ArrayBuffer input by ref:");
+      result = await suborbital.exec.runRef(
+        deployResult.version,
         new TextEncoder().encode("UTF-8-encoded text!").buffer
       );
       console.log(result.result);
 
       await sleep(1000);
 
+      let paramsWithRef = { ...params, ref: deployResult.version };
+
       console.log("Fetching function result metadata");
       let results = await suborbital.admin.getFunctionResultsMetadata(
-        fullParams
+        paramsWithRef
       );
       console.log(results);
 

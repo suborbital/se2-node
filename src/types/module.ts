@@ -1,4 +1,4 @@
-export interface Runnable {
+export interface Module {
   environment: string;
   userId: string;
   namespace: string;
@@ -11,14 +11,14 @@ export interface UserFunctionsParams {
   namespace: string;
 }
 
-export interface VersionedRunnable extends Runnable {
-  version: string;
+export interface VersionedModule extends Module {
+  ref: string;
 }
 
-export interface AuthenticatedRunnable extends Runnable {
+export interface AuthenticatedModule extends Module {
   token: string;
 }
 
-export interface BuildableRunnable extends AuthenticatedRunnable {
+export interface BuildableModule extends AuthenticatedModule {
   language: string;
 }
