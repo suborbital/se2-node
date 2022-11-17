@@ -17,8 +17,8 @@ interface AvailableFunction {
   version: string;
   draftVersion: string;
   apiVersion: string;
-  fqfn: string;
-  fqfnURI: string;
+  fqmn: string;
+  uri: string;
 }
 
 interface FunctionResults {
