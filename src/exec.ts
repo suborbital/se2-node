@@ -7,7 +7,7 @@ interface ExecConfig {
   envToken: string;
 }
 
-const EXEC_URI = "http://scc-atmo-service.suborbital.svc.cluster.local";
+const EXEC_URI = "http://e2core-service.suborbital.svc.cluster.local";
 
 interface ExecutionResult {
   result: ArrayBuffer;

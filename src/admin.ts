@@ -36,7 +36,7 @@ interface FunctionResult {
 }
 
 const ADMIN_URI =
-  "http://scc-controlplane-service.suborbital.svc.cluster.local:8081";
+  "http://se2-controlplane-service.suborbital.svc.cluster.local:8081";
 
 export class Admin {
   private baseUrl: string;

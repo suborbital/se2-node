@@ -33,7 +33,7 @@ interface Features {
 }
 
 const BUILDER_URI =
-  "http://scc-controlplane-service.suborbital.svc.cluster.local:8082";
+  "http://se2-controlplane-service.suborbital.svc.cluster.local:8082";
 
 export class Builder {
   private baseUrl: string;
