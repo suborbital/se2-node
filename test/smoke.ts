@@ -1,6 +1,6 @@
 import { Suborbital, localUriConfig } from "../src/main";
 
-const suborbital = new Suborbital(process.env.SCC_ENV_TOKEN, localUriConfig);
+const suborbital = new Suborbital(process.env.SE2_ENV_TOKEN, localUriConfig);
 
 async function sleep(ms) {
   return new Promise((resolve) => {

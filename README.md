@@ -29,7 +29,7 @@ Start by instantiating the client with your environment token:
 ```ts
 import { Suborbital } from "@suborbital/compute";
 
-const suborbital = new Suborbital(process.env.SCC_ENV_TOKEN);
+const suborbital = new Suborbital(process.env.SE2_ENV_TOKEN);
 ```
 
 The URIs for each of the APIs can be configured, if different than the defaults:
@@ -43,7 +43,7 @@ const config = {
   builderUri: "https://acme.co/builder",
 };
 
-const suborbital = new Suborbital(process.env.SCC_ENV_TOKEN, config);
+const suborbital = new Suborbital(process.env.SE2_ENV_TOKEN, config);
 ```
 
 A configuration for a locally-deployed Suborbital Compute Network is also available:
@@ -51,7 +51,7 @@ A configuration for a locally-deployed Suborbital Compute Network is also availa
 ```ts
 import { Suborbital, localUriConfig } from "@suborbital/compute";
 
-const suborbital = new Suborbital(process.env.SCC_ENV_TOKEN, localUriConfig);
+const suborbital = new Suborbital(process.env.SE2_ENV_TOKEN, localUriConfig);
 ```
 
 Then access endpoints on their respective sub-clients:
