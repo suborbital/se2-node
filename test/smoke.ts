@@ -19,7 +19,7 @@ async function e2e() {
       environment: "dev.suborbital",
       userId: "bigco",
       namespace: "default",
-      fnName: "foo",
+      name: "foo",
     };
     const token = await suborbital.admin.getToken(params);
     console.log("Token acquired.");
@@ -44,7 +44,7 @@ async function e2e() {
         throw new Error("Function test failed");
       }
 
-      const allFunctions = await suborbital.admin.getFunctions(buildParams);
+      const allFunctions = await suborbital.admin.getPlugins(buildParams);
       console.log("All functions:", allFunctions);
 
       const deployResult = await suborbital.builder.deployDraft(buildParams);
@@ -89,13 +89,13 @@ async function e2e() {
       let paramsWithRef = { ...params, ref: deployResult.version };
 
       console.log("Fetching function result metadata");
-      let results = await suborbital.admin.getFunctionResultsMetadata(
+      let results = await suborbital.admin.getExecutionResultsMetadata(
         paramsWithRef
       );
       console.log(results);
 
       console.log("Fetch single function result:");
-      let singleResult = await suborbital.admin.getFunctionResult({
+      let singleResult = await suborbital.admin.getExecutionResult({
         uuid: result.uuid,
       });
       console.log(singleResult);

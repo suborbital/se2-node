@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BuildableModule, AuthenticatedModule } from "./types/module";
+import { BuildablePlugin, AuthenticatedPlugin } from "./types/plugin";
 import uriencoded from "./util/uriencoded";
 
 interface BuilderConfig {
@@ -44,18 +44,11 @@ export class Builder {
 
   @uriencoded
   async build(
-    {
-      environment,
-      userId,
-      namespace,
-      fnName,
-      language,
-      token,
-    }: BuildableModule,
+    { environment, userId, namespace, name, language, token }: BuildablePlugin,
     body: string
   ) {
     const response = await axios.post(
-      `${this.baseUrl}/api/v1/build/${language}/${environment}.${userId}/${namespace}/${fnName}`,
+      `${this.baseUrl}/api/v1/build/${language}/${environment}.${userId}/${namespace}/${name}`,
       body,
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -67,11 +60,11 @@ export class Builder {
     environment,
     userId,
     namespace,
-    fnName,
+    name,
     token,
-  }: AuthenticatedModule) {
+  }: AuthenticatedPlugin) {
     const response = await axios.get(
-      `${this.baseUrl}/api/v1/draft/${environment}.${userId}/${namespace}/${fnName}`,
+      `${this.baseUrl}/api/v1/draft/${environment}.${userId}/${namespace}/${name}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     return response.data as EditorState;
@@ -79,7 +72,7 @@ export class Builder {
 
   @uriencoded
   async testDraft(
-    { environment, userId, namespace, fnName, token }: AuthenticatedModule,
+    { environment, userId, namespace, name, token }: AuthenticatedPlugin,
     input: String | ArrayBuffer | object
   ) {
     let buffer;
@@ -91,7 +84,7 @@ export class Builder {
       buffer = new TextEncoder().encode(JSON.stringify(input)).buffer;
     }
     const response = await axios.post(
-      `${this.baseUrl}/api/v1/test/${environment}.${userId}/${namespace}/${fnName}`,
+      `${this.baseUrl}/api/v1/test/${environment}.${userId}/${namespace}/${name}`,
       buffer,
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -103,11 +96,11 @@ export class Builder {
     environment,
     userId,
     namespace,
-    fnName,
+    name,
     token,
-  }: AuthenticatedModule) {
+  }: AuthenticatedPlugin) {
     const response = await axios.post(
-      `${this.baseUrl}/api/v1/draft/${environment}.${userId}/${namespace}/${fnName}/promote`,
+      `${this.baseUrl}/api/v1/draft/${environment}.${userId}/${namespace}/${name}/promote`,
       null,
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -115,9 +108,9 @@ export class Builder {
   }
 
   @uriencoded
-  async getTemplate({ fnName, language }: BuildableModule) {
+  async getTemplate({ name, language }: BuildablePlugin) {
     const response = await axios.get(
-      `${this.baseUrl}/api/v2/template/${language}/${fnName}`
+      `${this.baseUrl}/api/v2/template/${language}/${name}`
     );
     return response.data.contents as string;
   }

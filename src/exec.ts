@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Module } from "./types/module";
+import { Plugin } from "./types/plugin";
 import uriencoded from "./util/uriencoded";
 
 interface ExecConfig {
@@ -25,7 +25,7 @@ export class Exec {
 
   @uriencoded
   async run(
-    { environment, userId, namespace, fnName }: Module,
+    { environment, userId, namespace, name }: Plugin,
     input: String | ArrayBuffer | object
   ): Promise<ExecutionResult> {
     let buffer;
@@ -37,7 +37,7 @@ export class Exec {
       buffer = new TextEncoder().encode(JSON.stringify(input)).buffer;
     }
     const response = await axios.post(
-      `${this.baseUrl}/name/${environment}.${userId}/${namespace}/${fnName}`,
+      `${this.baseUrl}/name/${environment}.${userId}/${namespace}/${name}`,
       buffer,
       {
         headers: {
