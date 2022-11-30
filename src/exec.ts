@@ -25,7 +25,7 @@ export class Exec {
 
   @uriencoded
   async run(
-    { environment, userId, namespace, pluginName }: Plugin,
+    { environment, userId, namespace, name }: Plugin,
     input: String | ArrayBuffer | object
   ): Promise<ExecutionResult> {
     let buffer;
@@ -37,7 +37,7 @@ export class Exec {
       buffer = new TextEncoder().encode(JSON.stringify(input)).buffer;
     }
     const response = await axios.post(
-      `${this.baseUrl}/name/${environment}.${userId}/${namespace}/${pluginName}`,
+      `${this.baseUrl}/name/${environment}.${userId}/${namespace}/${name}`,
       buffer,
       {
         headers: {

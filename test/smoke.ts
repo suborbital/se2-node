@@ -19,7 +19,7 @@ async function e2e() {
       environment: "dev.suborbital",
       userId: "bigco",
       namespace: "default",
-      pluginName: "foo",
+      name: "foo",
     };
     const token = await suborbital.admin.getToken(params);
     console.log("Token acquired.");

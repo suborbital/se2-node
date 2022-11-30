@@ -63,7 +63,7 @@ async function run() {
       environment: "com.acmeco",
       userId: "1234",
       namespace: "default",
-      pluginName: "hello",
+      name: "hello",
     },
     "world!"
   );

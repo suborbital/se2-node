@@ -2,7 +2,7 @@ export interface Plugin {
   environment: string;
   userId: string;
   namespace: string;
-  pluginName: string;
+  name: string;
 }
 
 export interface UserPluginsParams {

@@ -46,9 +46,9 @@ export class Admin {
   }
 
   @uriencoded
-  async getToken({ environment, userId, namespace, pluginName }: Plugin) {
+  async getToken({ environment, userId, namespace, name }: Plugin) {
     const response = await axios.get(
-      `${this.baseUrl}/api/v1/token/${environment}.${userId}/${namespace}/${pluginName}`
+      `${this.baseUrl}/api/v1/token/${environment}.${userId}/${namespace}/${name}`
     );
     return response.data.token as string;
   }
@@ -66,11 +66,11 @@ export class Admin {
     environment,
     userId,
     namespace,
-    pluginName,
+    name,
     ref,
   }: VersionedPlugin) {
     const response = await axios.get(
-      `${this.baseUrl}/api/v2/results/by-fqmn/${environment}.${userId}/${namespace}/${pluginName}/${ref}`
+      `${this.baseUrl}/api/v2/results/by-fqmn/${environment}.${userId}/${namespace}/${name}/${ref}`
     );
     return response.data as ExecutionResults;
   }
