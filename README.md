@@ -46,7 +46,7 @@ const config = {
 const suborbital = new Suborbital(process.env.SE2_ENV_TOKEN, config);
 ```
 
-A configuration for a locally-deployed Suborbital Compute Network is also available:
+A configuration for a locally-deployed Suborbital Extension Engine is also available:
 
 ```ts
 import { Suborbital, localUriConfig } from "@suborbital/compute";
@@ -57,15 +57,14 @@ const suborbital = new Suborbital(process.env.SE2_ENV_TOKEN, localUriConfig);
 Then access endpoints on their respective sub-clients:
 
 ```ts
-async function runFunction() {
+async function run() {
   const result = await suborbital.exec.run({
     environment: "com.acmeco",
     userId: "1234",
     namespace: "default",
-    fnName: "foo",
-    version: "v1.0.0",
-  });
+    fnName: "hello",
+  }, "world!");
 
-  console.log("Function output:", result);
+  console.log("Output:", result);
 }
 ```
