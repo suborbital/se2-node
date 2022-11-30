@@ -58,12 +58,15 @@ Then access endpoints on their respective sub-clients:
 
 ```ts
 async function run() {
-  const result = await suborbital.exec.run({
-    environment: "com.acmeco",
-    userId: "1234",
-    namespace: "default",
-    fnName: "hello",
-  }, "world!");
+  const result = await suborbital.exec.run(
+    {
+      environment: "com.acmeco",
+      userId: "1234",
+      namespace: "default",
+      fnName: "hello",
+    },
+    "world!"
+  );
 
   console.log("Output:", result);
 }
