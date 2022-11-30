@@ -1,16 +1,16 @@
 import axios from "axios";
-import { Module, VersionedModule, UserFunctionsParams } from "./types/module";
+import { Plugin, VersionedPlugin, UserPluginsParams } from "./types/plugin";
 import uriencoded from "./util/uriencoded";
 
 interface AdminConfig {
   baseUrl?: string;
 }
 
-interface AvailableFunctions {
-  functions: AvailableFunction[];
+interface AvailablePlugins {
+  plugins: AvailablePlugins[];
 }
 
-interface AvailableFunction {
+interface AvailablePlugins {
   name: string;
   namespace: string;
   lang: string;
@@ -21,11 +21,11 @@ interface AvailableFunction {
   uri: string;
 }
 
-interface FunctionResults {
-  results: FunctionResult[];
+interface ExecutionResults {
+  results: ExecutionResult[];
 }
 
-interface FunctionResult {
+interface ExecutionResult {
   uuid: string;
   timestamp: string;
   success: boolean;
@@ -46,7 +46,7 @@ export class Admin {
   }
 
   @uriencoded
-  async getToken({ environment, userId, namespace, fnName }: Module) {
+  async getToken({ environment, userId, namespace, fnName }: Plugin) {
     const response = await axios.get(
       `${this.baseUrl}/api/v1/token/${environment}.${userId}/${namespace}/${fnName}`
     );
@@ -54,37 +54,37 @@ export class Admin {
   }
 
   @uriencoded
-  async getFunctions({ environment, userId, namespace }: UserFunctionsParams) {
+  async getPlugins({ environment, userId, namespace }: UserPluginsParams) {
     const response = await axios.get(
       `${this.baseUrl}/api/v2/functions/${environment}.${userId}/${namespace}`
     );
-    return response.data as AvailableFunctions;
+    return response.data as AvailablePlugins;
   }
 
   @uriencoded
-  async getFunctionResultsMetadata({
+  async getExecutionResultsMetadata({
     environment,
     userId,
     namespace,
     fnName,
     ref,
-  }: VersionedModule) {
+  }: VersionedPlugin) {
     const response = await axios.get(
       `${this.baseUrl}/api/v2/results/by-fqmn/${environment}.${userId}/${namespace}/${fnName}/${ref}`
     );
-    return response.data as FunctionResults;
+    return response.data as ExecutionResults;
   }
 
   @uriencoded
-  async getFunctionResultMetadata({ uuid }: { uuid: string }) {
+  async getExecutionResultMetadata({ uuid }: { uuid: string }) {
     const response = await axios.get(
       `${this.baseUrl}/api/v2/results/by-uuid/${uuid}`
     );
-    return response.data as FunctionResult;
+    return response.data as ExecutionResult;
   }
 
   @uriencoded
-  async getFunctionResult({ uuid }: { uuid: string }) {
+  async getExecutionResult({ uuid }: { uuid: string }) {
     const response = await axios.get(`${this.baseUrl}/api/v2/result/${uuid}`);
     return response.data;
   }

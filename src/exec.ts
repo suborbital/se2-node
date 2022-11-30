@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Module } from "./types/module";
+import { Plugin } from "./types/plugin";
 import uriencoded from "./util/uriencoded";
 
 interface ExecConfig {
@@ -25,7 +25,7 @@ export class Exec {
 
   @uriencoded
   async run(
-    { environment, userId, namespace, fnName }: Module,
+    { environment, userId, namespace, fnName }: Plugin,
     input: String | ArrayBuffer | object
   ): Promise<ExecutionResult> {
     let buffer;
