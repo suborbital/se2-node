@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/suborbital/se2-node#readme",
   "devDependencies": {
-    "@types/node": "^16.11.7",
+    "@types/node": "^18.0.0",
     "prettier": "^2.4.1",
     "typescript": "^4.4.4"
   },
