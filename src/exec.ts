@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 import { Plugin } from "./types/plugin";
 import uriencoded from "./util/uriencoded";
 
@@ -18,9 +18,18 @@ export class Exec {
   private baseUrl: string;
   private envToken: string;
 
+  private http: AxiosInstance;
+
   constructor({ baseUrl = EXEC_URI, envToken }: ExecConfig) {
     this.baseUrl = baseUrl;
     this.envToken = envToken;
+
+    this.http = axios.create({
+      baseURL: this.baseUrl,
+      headers: {
+        Authorization: `Bearer ${this.envToken}`,
+      },
+    });
   }
 
   @uriencoded
@@ -36,14 +45,9 @@ export class Exec {
     } else {
       buffer = new TextEncoder().encode(JSON.stringify(input)).buffer;
     }
-    const response = await axios.post(
-      `${this.baseUrl}/name/${environment}.${userId}/${namespace}/${name}`,
-      buffer,
-      {
-        headers: {
-          Authorization: `Bearer ${this.envToken}`,
-        },
-      }
+    const response = await this.http.post(
+      `/name/${environment}.${userId}/${namespace}/${name}`,
+      buffer
     );
     return {
       result: response.data,
@@ -63,11 +67,7 @@ export class Exec {
     } else {
       buffer = new TextEncoder().encode(JSON.stringify(input)).buffer;
     }
-    const response = await axios.post(`${this.baseUrl}/ref/${ref}`, buffer, {
-      headers: {
-        Authorization: `Bearer ${this.envToken}`,
-      },
-    });
+    const response = await this.http.post(`/ref/${ref}`, buffer);
     return {
       result: response.data,
       uuid: response.headers["x-suborbital-requestid"],

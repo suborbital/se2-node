@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 import { Plugin, VersionedPlugin, UserPluginsParams } from "./types/plugin";
 import uriencoded from "./util/uriencoded";
 
@@ -41,22 +41,28 @@ const ADMIN_URI =
 export class Admin {
   private baseUrl: string;
 
+  private http: AxiosInstance;
+
   constructor({ baseUrl = ADMIN_URI }: AdminConfig) {
     this.baseUrl = baseUrl;
+
+    this.http = axios.create({
+      baseURL: this.baseUrl,
+    });
   }
 
   @uriencoded
   async getToken({ environment, userId, namespace, name }: Plugin) {
-    const response = await axios.get(
-      `${this.baseUrl}/api/v1/token/${environment}.${userId}/${namespace}/${name}`
+    const response = await this.http.get(
+      `/api/v1/token/${environment}.${userId}/${namespace}/${name}`
     );
     return response.data.token as string;
   }
 
   @uriencoded
   async getPlugins({ environment, userId, namespace }: UserPluginsParams) {
-    const response = await axios.get(
-      `${this.baseUrl}/api/v2/functions/${environment}.${userId}/${namespace}`
+    const response = await this.http.get(
+      `/api/v2/functions/${environment}.${userId}/${namespace}`
     );
     return response.data as AvailablePlugins;
   }
@@ -69,23 +75,21 @@ export class Admin {
     name,
     ref,
   }: VersionedPlugin) {
-    const response = await axios.get(
-      `${this.baseUrl}/api/v2/results/by-fqmn/${environment}.${userId}/${namespace}/${name}/${ref}`
+    const response = await this.http.get(
+      `/api/v2/results/by-fqmn/${environment}.${userId}/${namespace}/${name}/${ref}`
     );
     return response.data as ExecutionResults;
   }
 
   @uriencoded
   async getExecutionResultMetadata({ uuid }: { uuid: string }) {
-    const response = await axios.get(
-      `${this.baseUrl}/api/v2/results/by-uuid/${uuid}`
-    );
+    const response = await this.http.get(`/api/v2/results/by-uuid/${uuid}`);
     return response.data as ExecutionResult;
   }
 
   @uriencoded
   async getExecutionResult({ uuid }: { uuid: string }) {
-    const response = await axios.get(`${this.baseUrl}/api/v2/result/${uuid}`);
+    const response = await this.http.get(`/api/v2/result/${uuid}`);
     return response.data;
   }
 }
