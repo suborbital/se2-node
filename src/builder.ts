@@ -44,12 +44,15 @@ export class Builder {
 
   private http: AxiosInstance;
 
-  constructor({ baseUrl = BUILDER_URI, editorHost = EDITOR_HOST }: BuilderConfig) {
+  constructor({
+    baseUrl = BUILDER_URI,
+    editorHost = EDITOR_HOST,
+  }: BuilderConfig) {
     this.baseUrl = baseUrl;
     this.editorHost = editorHost;
 
     this.http = axios.create({
-      baseURL: this.baseUrl
+      baseURL: this.baseUrl,
     });
   }
 
@@ -57,8 +60,8 @@ export class Builder {
     token,
     environment,
     userId,
-    namespace = 'default',
-    language = 'javascript',
+    namespace = "default",
+    language = "javascript",
     name,
   }: BuildablePlugin) {
     const identifier = `${environment}.${userId}`;
