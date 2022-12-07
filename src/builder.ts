@@ -4,6 +4,7 @@ import uriencoded from "./util/uriencoded";
 
 interface BuilderConfig {
   baseUrl?: string;
+  editorHost?: string;
 }
 
 interface BuildResponse {
@@ -35,11 +36,37 @@ interface Features {
 const BUILDER_URI =
   "http://se2-controlplane-service.suborbital.svc.cluster.local:8082";
 
+const EDITOR_HOST = "https://editor.suborbital.network/";
+
 export class Builder {
   private baseUrl: string;
+  private editorHost: string;
 
-  constructor({ baseUrl = BUILDER_URI }: BuilderConfig) {
+  constructor({ baseUrl = BUILDER_URI, editorHost = EDITOR_HOST }: BuilderConfig) {
     this.baseUrl = baseUrl;
+    this.editorHost = editorHost;
+  }
+
+  getEditorUrl({
+    token,
+    environment,
+    userId,
+    namespace = 'default',
+    language = 'javascript',
+    name,
+  }: BuildablePlugin) {
+    const identifier = `${environment}.${userId}`;
+
+    const urlParams = new URLSearchParams({
+      token,
+      builder: this.baseUrl,
+      template: language,
+      ident: identifier,
+      namespace,
+      fn: name,
+    });
+
+    return `${this.editorHost}?${urlParams}`;
   }
 
   @uriencoded
