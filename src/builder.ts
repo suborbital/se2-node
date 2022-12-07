@@ -56,6 +56,28 @@ export class Builder {
     });
   }
 
+  @uriencoded
+  async getSessionToken({
+    token,
+    environment,
+    userId,
+    namespace,
+    name,
+  }: AuthenticatedPlugin) {
+    const identifier = `${environment}.${userId}`;
+
+    // Use the environment token to create an editor session token
+    const response = await this.http.get(
+      `/auth/v2/access/${identifier}/${namespace}/${name}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data.token as string;
+  }
+
   getEditorUrl({
     token,
     environment,
