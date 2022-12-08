@@ -1,13 +1,10 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
-import {
-  Plugin,
-  VersionedPlugin,
-  UserPluginsParams,
-} from "./types/plugin";
+import { Plugin, VersionedPlugin, UserPluginsParams } from "./types/plugin";
 import uriencoded from "./util/uriencoded";
 
 interface AdminConfig {
   baseUrl?: string;
+  apiUrl?: string;
 }
 
 interface AvailablePlugins {
@@ -70,16 +67,28 @@ interface SessionAPIParams {
 const ADMIN_URI =
   "http://se2-controlplane-service.suborbital.svc.cluster.local:8081";
 
+const API_URI = "https://api.stg.suborbital.network";
+
 export class Admin {
   private baseUrl: string;
 
+  // Control plane requests
   private http: AxiosInstance;
 
-  constructor({ baseUrl = ADMIN_URI }: AdminConfig) {
+  // Hosted API requests
+  private apiBaseUrl: string;
+  private api: AxiosInstance;
+
+  constructor({ baseUrl = ADMIN_URI, apiUrl = API_URI }: AdminConfig) {
     this.baseUrl = baseUrl;
+    this.apiBaseUrl = apiUrl;
 
     this.http = axios.create({
       baseURL: this.baseUrl,
+    });
+
+    this.api = axios.create({
+      baseURL: this.apiBaseUrl,
     });
   }
 
@@ -131,10 +140,8 @@ export class Admin {
     const claims = {};
 
     // Use the environment token to create an session token scoped to the tenant
-    const response = await this.http.post(
-      `https://api.stg.suborbital.network/api/v1/tenant/${encodeURIComponent(
-        id
-      )}/session`,
+    const response = await this.api.post(
+      `/api/v1/tenant/${encodeURIComponent(id)}/session`,
       claims,
       {
         headers: {
@@ -149,10 +156,8 @@ export class Admin {
   async listTenants({ environment, envToken }: TenantAPIRequestParams) {
     let tenants;
     try {
-      tenants = await this.http.get(
-        `https://api.stg.suborbital.network/api/v1/environment/${encodeURIComponent(
-          environment
-        )}`,
+      tenants = await this.api.get(
+        `/api/v1/environment/${encodeURIComponent(environment)}`,
         {
           headers: {
             Authorization: `Bearer ${envToken}`,
@@ -176,10 +181,8 @@ export class Admin {
     try {
       const id = `${environment}.${tenant}`;
 
-      tenantRes = await this.http.get(
-        `https://api.stg.suborbital.network/api/v1/tenant/${encodeURIComponent(
-          id
-        )}`,
+      tenantRes = await this.api.get(
+        `/api/v1/tenant/${encodeURIComponent(id)}`,
         {
           headers: {
             Authorization: `Bearer ${envToken}`,
@@ -202,10 +205,8 @@ export class Admin {
     try {
       const id = `${environment}.${tenant}`;
 
-      tenantRes = await this.http.post(
-        `https://api.stg.suborbital.network/api/v1/tenant/${encodeURIComponent(
-          id
-        )}`,
+      tenantRes = await this.api.post(
+        `/api/v1/tenant/${encodeURIComponent(id)}`,
         description ? { description } : undefined,
         {
           headers: {
