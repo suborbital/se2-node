@@ -6,7 +6,6 @@ interface SuborbitalUriConfig {
   adminUri?: string;
   execUri?: string;
   builderUri?: string;
-  apiUri?: string;
 }
 
 export const localUriConfig: SuborbitalUriConfig = {
@@ -25,9 +24,9 @@ export class Suborbital {
       throw new Error("Suborbital environment token is required");
     }
 
-    const { adminUri, execUri, builderUri, apiUri } = uriConfig || {};
+    const { adminUri, execUri, builderUri } = uriConfig || {};
 
-    this.admin = new Admin({ baseUrl: adminUri, apiUrl: apiUri });
+    this.admin = new Admin({ baseUrl: adminUri });
     this.exec = new Exec({ baseUrl: execUri, envToken });
     this.builder = new Builder({ baseUrl: builderUri });
   }

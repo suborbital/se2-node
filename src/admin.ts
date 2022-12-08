@@ -64,10 +64,7 @@ interface SessionAPIParams {
   tenant: string;
 }
 
-const ADMIN_URI =
-  "http://se2-controlplane-service.suborbital.svc.cluster.local:8081";
-
-const API_URI = "https://api.stg.suborbital.network";
+const ADMIN_URI = "https://api.stg.suborbital.network";
 
 export class Admin {
   private baseUrl: string;
@@ -75,20 +72,11 @@ export class Admin {
   // Control plane requests
   private http: AxiosInstance;
 
-  // Hosted API requests
-  private apiBaseUrl: string;
-  private api: AxiosInstance;
-
-  constructor({ baseUrl = ADMIN_URI, apiUrl = API_URI }: AdminConfig) {
+  constructor({ baseUrl = ADMIN_URI }: AdminConfig) {
     this.baseUrl = baseUrl;
-    this.apiBaseUrl = apiUrl;
 
     this.http = axios.create({
       baseURL: this.baseUrl,
-    });
-
-    this.api = axios.create({
-      baseURL: this.apiBaseUrl,
     });
   }
 
@@ -140,7 +128,7 @@ export class Admin {
     const claims = {};
 
     // Use the environment token to create an session token scoped to the tenant
-    const response = await this.api.post(
+    const response = await this.http.post(
       `/api/v1/tenant/${encodeURIComponent(id)}/session`,
       claims,
       {
@@ -156,7 +144,7 @@ export class Admin {
   async listTenants({ environment, envToken }: TenantAPIRequestParams) {
     let tenants;
     try {
-      tenants = await this.api.get(
+      tenants = await this.http.get(
         `/api/v1/environment/${encodeURIComponent(environment)}`,
         {
           headers: {
@@ -181,7 +169,7 @@ export class Admin {
     try {
       const id = `${environment}.${tenant}`;
 
-      tenantRes = await this.api.get(
+      tenantRes = await this.http.get(
         `/api/v1/tenant/${encodeURIComponent(id)}`,
         {
           headers: {
@@ -205,7 +193,7 @@ export class Admin {
     try {
       const id = `${environment}.${tenant}`;
 
-      tenantRes = await this.api.post(
+      tenantRes = await this.http.post(
         `/api/v1/tenant/${encodeURIComponent(id)}`,
         description ? { description } : undefined,
         {
