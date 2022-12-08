@@ -1,5 +1,9 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
-import { Plugin, VersionedPlugin, UserPluginsParams } from "./types/plugin";
+import {
+  Plugin,
+  VersionedPlugin,
+  UserPluginsParams,
+} from "./types/plugin";
 import uriencoded from "./util/uriencoded";
 
 interface AdminConfig {
@@ -55,6 +59,12 @@ interface TenantAPITenantParams extends TenantAPIRequestParams {
 }
 interface TenantAPITenantChangeParams extends TenantAPITenantParams {
   description?: string;
+}
+
+interface SessionAPIParams {
+  envToken: string;
+  environment: string;
+  tenant: string;
 }
 
 const ADMIN_URI =
@@ -113,6 +123,27 @@ export class Admin {
   async getExecutionResult({ uuid }: { uuid: string }) {
     const response = await this.http.get(`/api/v2/result/${uuid}`);
     return response.data;
+  }
+
+  async getSessionToken({ envToken, environment, tenant }: SessionAPIParams) {
+    const id = `${environment}.${tenant}`;
+
+    const claims = {};
+
+    // Use the environment token to create an session token scoped to the tenant
+    const response = await this.http.post(
+      `https://api.stg.suborbital.network/api/v1/tenant/${encodeURIComponent(
+        id
+      )}/session`,
+      claims,
+      {
+        headers: {
+          Authorization: `Bearer ${envToken}`,
+        },
+      }
+    );
+
+    return response.data.token as string;
   }
 
   async listTenants({ environment, envToken }: TenantAPIRequestParams) {
