@@ -1,12 +1,12 @@
 <p align="center">
     <a href="https://suborbital.dev/">
-        <img src="suborbital-logo.png" alt="Suborbital" height="200" />
+        <img src="suborbital-logo.svg" alt="Suborbital" height="120" />
     </a>
 </p>
 
-# Suborbital Compute JavaScript SDK
+# Suborbital Extension Engine (SE2) JavaScript SDK
 
-This SDK provides an easy way to interact with the Suborbital Compute API from JavaScript or TypeScript.
+This SDK provides an easy way to interact with the SE2 API from JavaScript or TypeScript.
 
 ## Installation
 
