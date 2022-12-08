@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { Plugin, VersionedPlugin, UserPluginsParams } from "./types/plugin";
 import uriencoded from "./util/uriencoded";
 
@@ -33,6 +33,28 @@ interface ExecutionResult {
     code?: number;
     message?: string;
   };
+}
+
+interface Tenant {
+  authorized_party: string;
+  organization: string;
+  environment: string;
+  tenant: string;
+}
+
+interface TenantAPIParams {
+  envToken: string;
+}
+
+interface TenantAPIRequestParams extends TenantAPIParams {
+  environment: string;
+}
+
+interface TenantAPITenantParams extends TenantAPIRequestParams {
+  tenant: string;
+}
+interface TenantAPITenantChangeParams extends TenantAPITenantParams {
+  description?: string;
 }
 
 const ADMIN_URI =
@@ -91,5 +113,91 @@ export class Admin {
   async getExecutionResult({ uuid }: { uuid: string }) {
     const response = await this.http.get(`/api/v2/result/${uuid}`);
     return response.data;
+  }
+
+  async listTenants({ environment, envToken }: TenantAPIRequestParams) {
+    let tenants;
+    try {
+      tenants = await this.http.get(
+        `https://api.stg.suborbital.network/api/v1/environment/${encodeURIComponent(
+          environment
+        )}`,
+        {
+          headers: {
+            Authorization: `Bearer ${envToken}`,
+          },
+        }
+      );
+
+      return (tenants.data.tenants ?? []) as Tenant[];
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getTenant({
+    environment,
+    tenant,
+    envToken,
+  }: TenantAPITenantParams): Promise<Tenant> {
+    let tenantRes: AxiosResponse;
+
+    try {
+      const id = `${environment}.${tenant}`;
+
+      tenantRes = await this.http.get(
+        `https://api.stg.suborbital.network/api/v1/tenant/${encodeURIComponent(
+          id
+        )}`,
+        {
+          headers: {
+            Authorization: `Bearer ${envToken}`,
+          },
+        }
+      );
+
+      return tenantRes.data as Tenant;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async createTenant(
+    { environment, tenant, description, envToken }: TenantAPITenantChangeParams,
+    ignoreExisting = true
+  ): Promise<Tenant> {
+    let tenantRes: AxiosResponse;
+
+    try {
+      const id = `${environment}.${tenant}`;
+
+      tenantRes = await this.http.post(
+        `https://api.stg.suborbital.network/api/v1/tenant/${encodeURIComponent(
+          id
+        )}`,
+        description ? { description } : undefined,
+        {
+          headers: {
+            Authorization: `Bearer ${envToken}`,
+          },
+        }
+      );
+
+      return tenantRes.data as Tenant;
+    } catch (createError) {
+      const { response } = createError;
+
+      // By default, if a tenant with this id already exists, the function still succeeds
+      if (ignoreExisting) {
+        try {
+          return this.getTenant({ environment, tenant, envToken });
+        } catch (getError) {
+          // Return original error
+        }
+      }
+
+      // Error will be returned when getTenant fails or IgnoreExisting is set to false
+      throw createError;
+    }
   }
 }
