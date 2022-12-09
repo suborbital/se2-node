@@ -62,6 +62,8 @@ interface SessionAPIParams {
   envToken: string;
   environment: string;
   tenant: string;
+  namespace?: string;
+  plugin?: string;
 }
 
 const ADMIN_URI = "https://api.stg.suborbital.network";
@@ -122,10 +124,21 @@ export class Admin {
     return response.data;
   }
 
-  async getSessionToken({ envToken, environment, tenant }: SessionAPIParams) {
+  async getSessionToken({
+    envToken,
+    environment,
+    tenant,
+    namespace,
+    plugin,
+  }: SessionAPIParams) {
     const id = `${environment}.${tenant}`;
 
-    const claims = {};
+    const claims = {
+      identifier: tenant,
+    };
+
+    if (namespace) claims["namespace"] = namespace;
+    if (plugin) claims["fn"] = plugin;
 
     // Use the environment token to create an session token scoped to the tenant
     const response = await this.http.post(
