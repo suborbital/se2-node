@@ -1,6 +1,12 @@
-import { Suborbital, localUriConfig } from "../src/main";
+import { Suborbital } from "../src/main";
 
-const suborbital = new Suborbital(process.env.SE2_ENV_TOKEN, localUriConfig);
+const config = {
+  apiUri: "https://stg.api.suborbital.network",
+  execUri: "https://stg.edge.suborbital.network",
+  builderUri: "https://stg.api.suborbital.network",
+};
+
+const suborbital = new Suborbital(process.env.SE2_ENV_TOKEN, config);
 
 async function sleep(ms) {
   return new Promise((resolve) => {
@@ -12,25 +18,45 @@ async function e2e() {
   try {
     console.log("Running end-to-end test.\n");
 
+    console.log("Importing templates...");
+    await suborbital.admin.importGitHubTemplates({
+      repo: "suborbital/sdk",
+      ref: "main",
+      path: "templates",
+    });
+
+    console.log("Listing templates...");
+    const templates = await suborbital.admin.getTemplates();
+    console.log(templates);
+
+    console.log("Listing features...");
     const features = await suborbital.builder.getFeatures();
     console.log(features);
 
+    console.log("Creating tenant...");
+    await suborbital.admin.createTenant({ tenant: "bigco" });
+
     const params = {
-      environment: "dev.suborbital",
-      userId: "bigco",
+      tenant: "bigco",
       namespace: "default",
       name: "foo",
     };
-    const token = await suborbital.admin.getToken(params);
+    console.log("Creating session...");
+    const token = await suborbital.admin.createSession(params);
     console.log("Token acquired.");
 
-    const buildParams = { ...params, token, language: "assemblyscript" };
+    const buildParams = { ...params, token, template: "javascript" };
+    console.log("Creating draft...");
+    await suborbital.builder.createDraft(buildParams);
 
-    const template = await suborbital.builder.getTemplate(buildParams);
-    console.log("Template loaded.");
+    const draft = await suborbital.builder.getDraft(buildParams);
+    console.log("Draft loaded.\n", draft.contents);
 
     console.log("Building function...");
-    const buildResult = await suborbital.builder.build(buildParams, template);
+    const buildResult = await suborbital.builder.build(
+      buildParams,
+      draft.contents + ";console.log('suspicious')   "
+    );
     if (buildResult.succeeded) {
       console.log("Function built successfully.");
 
@@ -38,17 +64,20 @@ async function e2e() {
         buildParams,
         "tester"
       );
-      if (testResult.includes("hello, tester")) {
+      console.log("Function test result:", testResult);
+      if (testResult.includes("Hello, tester")) {
         console.log("Function tested successfuly");
       } else {
         throw new Error("Function test failed");
       }
 
+      const deployResult = await suborbital.builder.deployDraft(buildParams);
+      console.log("Deployed version", deployResult.ref);
+
       const allFunctions = await suborbital.admin.getPlugins(buildParams);
       console.log("All functions:", allFunctions);
 
-      const deployResult = await suborbital.builder.deployDraft(buildParams);
-      console.log("Deployed version", deployResult.version);
+      await sleep(3000);
 
       console.log("Executing function with string input by fqmn:");
       let result = await suborbital.exec.run(params, "tester!");
@@ -67,38 +96,10 @@ async function e2e() {
       );
       console.log(result.result);
 
-      console.log("Executing function with string input by ref:");
-      result = await suborbital.exec.runRef(deployResult.version, "tester!");
-      console.log(result.result);
+      console.log("Removing tenant...");
+      await suborbital.admin.deleteTenant({ tenant: "bigco" });
 
-      console.log("Executing function with JSON object input by ref:");
-      result = await suborbital.exec.runRef(deployResult.version, {
-        my: { json: "object" },
-      });
-      console.log(result.result);
-
-      console.log("Executing function with ArrayBuffer input by ref:");
-      result = await suborbital.exec.runRef(
-        deployResult.version,
-        new TextEncoder().encode("UTF-8-encoded text!").buffer
-      );
-      console.log(result.result);
-
-      await sleep(1000);
-
-      let paramsWithRef = { ...params, ref: deployResult.version };
-
-      console.log("Fetching function result metadata");
-      let results = await suborbital.admin.getExecutionResultsMetadata(
-        paramsWithRef
-      );
-      console.log(results);
-
-      console.log("Fetch single function result:");
-      let singleResult = await suborbital.admin.getExecutionResult({
-        uuid: result.uuid,
-      });
-      console.log(singleResult);
+      console.log("Success!");
     } else {
       console.error("Failed to build function.");
       process.exit(1);

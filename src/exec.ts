@@ -4,7 +4,7 @@ import uriencoded from "./util/uriencoded";
 
 interface ExecConfig {
   baseUrl?: string;
-  envToken: string;
+  apiKey: string;
 }
 
 const EXEC_URI = "http://e2core-service.suborbital.svc.cluster.local";
@@ -16,25 +16,25 @@ interface ExecutionResult {
 
 export class Exec {
   private baseUrl: string;
-  private envToken: string;
+  private apiKey: string;
 
   private http: AxiosInstance;
 
-  constructor({ baseUrl = EXEC_URI, envToken }: ExecConfig) {
+  constructor({ baseUrl = EXEC_URI, apiKey }: ExecConfig) {
     this.baseUrl = baseUrl;
-    this.envToken = envToken;
+    this.apiKey = apiKey;
 
     this.http = axios.create({
       baseURL: this.baseUrl,
       headers: {
-        Authorization: `Bearer ${this.envToken}`,
+        Authorization: `Bearer ${this.apiKey}`,
       },
     });
   }
 
   @uriencoded
   async run(
-    { environment, userId, namespace, name }: Plugin,
+    { tenant, namespace, name }: Plugin,
     input: String | ArrayBuffer | object
   ): Promise<ExecutionResult> {
     let buffer;
@@ -46,28 +46,9 @@ export class Exec {
       buffer = new TextEncoder().encode(JSON.stringify(input)).buffer;
     }
     const response = await this.http.post(
-      `/name/${environment}.${userId}/${namespace}/${name}`,
+      `/name/${tenant}/${namespace}/${name}`,
       buffer
     );
-    return {
-      result: response.data,
-      uuid: response.headers["x-suborbital-requestid"],
-    };
-  }
-
-  async runRef(
-    ref: String,
-    input: String | ArrayBuffer | object
-  ): Promise<ExecutionResult> {
-    let buffer;
-    if (typeof input === "string") {
-      buffer = new TextEncoder().encode(input).buffer;
-    } else if (input instanceof ArrayBuffer) {
-      buffer = input;
-    } else {
-      buffer = new TextEncoder().encode(JSON.stringify(input)).buffer;
-    }
-    const response = await this.http.post(`/ref/${ref}`, buffer);
     return {
       result: response.data,
       uuid: response.headers["x-suborbital-requestid"],
