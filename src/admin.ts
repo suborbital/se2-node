@@ -1,10 +1,10 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
-import { Plugin, VersionedPlugin, UserPluginsParams } from "./types/plugin";
+import { Plugin, UserPluginsParams } from "./types/plugin";
 import uriencoded from "./util/uriencoded";
 
 interface AdminConfig {
   baseUrl?: string;
-  apiUrl?: string;
+  apiKey: string;
 }
 
 interface AvailablePlugins {
@@ -22,149 +22,83 @@ interface AvailablePlugins {
   uri: string;
 }
 
-interface ExecutionResults {
-  results: ExecutionResult[];
-}
-
-interface ExecutionResult {
-  uuid: string;
-  timestamp: string;
-  success: boolean;
-  error: {
-    code?: number;
-    message?: string;
-  };
-}
-
 interface Tenant {
   authorized_party: string;
   organization: string;
   environment: string;
-  tenant: string;
+  id: string;
 }
 
 interface TenantAPIParams {
-  envToken: string;
-}
-
-interface TenantAPIRequestParams extends TenantAPIParams {
-  environment: string;
-}
-
-interface TenantAPITenantParams extends TenantAPIRequestParams {
   tenant: string;
 }
-interface TenantAPITenantChangeParams extends TenantAPITenantParams {
-  description?: string;
+
+interface TemplateMetadataInfo {
+  name: string;
+  lang: string;
+  api_version: string;
 }
 
-interface SessionAPIParams {
-  envToken: string;
-  environment: string;
-  tenant: string;
-  namespace?: string;
-  plugin?: string;
+interface Templates {
+  templates: TemplateMetadataInfo[];
 }
 
-const ADMIN_URI = "https://api.stg.suborbital.network";
+interface GetTemplateParams {
+  name: string;
+}
+
+interface importGitHubTemplatesParams {
+  repo: string;
+  ref: string;
+  path?: string;
+}
+
+const ADMIN_URI = "https://api.suborbital.network";
 
 export class Admin {
   private baseUrl: string;
+  private apiKey: string;
 
   // Control plane requests
   private http: AxiosInstance;
 
-  constructor({ baseUrl = ADMIN_URI }: AdminConfig) {
+  constructor({ baseUrl = ADMIN_URI, apiKey }: AdminConfig) {
     this.baseUrl = baseUrl;
+    this.apiKey = apiKey;
 
     this.http = axios.create({
       baseURL: this.baseUrl,
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+      },
     });
   }
 
   @uriencoded
-  async getToken({ environment, userId, namespace, name }: Plugin) {
-    const response = await this.http.get(
-      `/api/v1/token/${environment}.${userId}/${namespace}/${name}`
+  async createSession({ tenant, namespace, name }: Plugin) {
+    const response = await this.http.post(
+      `/environment/v1/tenant/${tenant}/session`,
+      {
+        namespace,
+        fn: name,
+      }
     );
     return response.data.token as string;
   }
 
   @uriencoded
-  async getPlugins({ environment, userId, namespace }: UserPluginsParams) {
+  async getPlugins({ tenant, namespace }: UserPluginsParams) {
     const response = await this.http.get(
-      `/api/v2/functions/${environment}.${userId}/${namespace}`
+      `/environment/v1/tenant/${tenant}/plugins`,
+      { params: { namespace } }
     );
     return response.data as AvailablePlugins;
   }
 
-  @uriencoded
-  async getExecutionResultsMetadata({
-    environment,
-    userId,
-    namespace,
-    name,
-    ref,
-  }: VersionedPlugin) {
-    const response = await this.http.get(
-      `/api/v2/results/by-fqmn/${environment}.${userId}/${namespace}/${name}/${ref}`
-    );
-    return response.data as ExecutionResults;
-  }
-
-  @uriencoded
-  async getExecutionResultMetadata({ uuid }: { uuid: string }) {
-    const response = await this.http.get(`/api/v2/results/by-uuid/${uuid}`);
-    return response.data as ExecutionResult;
-  }
-
-  @uriencoded
-  async getExecutionResult({ uuid }: { uuid: string }) {
-    const response = await this.http.get(`/api/v2/result/${uuid}`);
-    return response.data;
-  }
-
-  async getSessionToken({
-    envToken,
-    environment,
-    tenant,
-    namespace,
-    plugin,
-  }: SessionAPIParams) {
-    const id = `${environment}.${tenant}`;
-
-    const claims = {
-      identifier: tenant,
-    };
-
-    if (namespace) claims["namespace"] = namespace;
-    if (plugin) claims["fn"] = plugin;
-
-    // Use the environment token to create an session token scoped to the tenant
-    const response = await this.http.post(
-      `/api/v1/tenant/${encodeURIComponent(id)}/session`,
-      claims,
-      {
-        headers: {
-          Authorization: `Bearer ${envToken}`,
-        },
-      }
-    );
-
-    return response.data.token as string;
-  }
-
-  async listTenants({ environment, envToken }: TenantAPIRequestParams) {
+  async listTenants() {
     let tenants;
     try {
-      tenants = await this.http.get(
-        `/api/v1/environment/${encodeURIComponent(environment)}`,
-        {
-          headers: {
-            Authorization: `Bearer ${envToken}`,
-          },
-        }
-      );
+      tenants = await this.http.get(`/environment/v1/tenant`);
 
       return (tenants.data.tenants ?? []) as Tenant[];
     } catch (error) {
@@ -172,23 +106,12 @@ export class Admin {
     }
   }
 
-  async getTenant({
-    environment,
-    tenant,
-    envToken,
-  }: TenantAPITenantParams): Promise<Tenant> {
+  async getTenant({ tenant }: TenantAPIParams): Promise<Tenant> {
     let tenantRes: AxiosResponse;
 
     try {
-      const id = `${environment}.${tenant}`;
-
       tenantRes = await this.http.get(
-        `/api/v1/tenant/${encodeURIComponent(id)}`,
-        {
-          headers: {
-            Authorization: `Bearer ${envToken}`,
-          },
-        }
+        `/environment/v1/tenant/${encodeURIComponent(tenant)}`
       );
 
       return tenantRes.data as Tenant;
@@ -198,32 +121,22 @@ export class Admin {
   }
 
   async createTenant(
-    { environment, tenant, description, envToken }: TenantAPITenantChangeParams,
+    { tenant }: TenantAPIParams,
     ignoreExisting = true
   ): Promise<Tenant> {
     let tenantRes: AxiosResponse;
 
     try {
-      const id = `${environment}.${tenant}`;
-
       tenantRes = await this.http.post(
-        `/api/v1/tenant/${encodeURIComponent(id)}`,
-        description ? { description } : undefined,
-        {
-          headers: {
-            Authorization: `Bearer ${envToken}`,
-          },
-        }
+        `/environment/v1/tenant/${encodeURIComponent(tenant)}`
       );
 
       return tenantRes.data as Tenant;
     } catch (createError) {
-      const { response } = createError;
-
       // By default, if a tenant with this id already exists, the function still succeeds
       if (ignoreExisting) {
         try {
-          return this.getTenant({ environment, tenant, envToken });
+          return this.getTenant({ tenant });
         } catch (getError) {
           // Return original error
         }
@@ -231,6 +144,64 @@ export class Admin {
 
       // Error will be returned when getTenant fails or IgnoreExisting is set to false
       throw createError;
+    }
+  }
+
+  async deleteTenant({ tenant }: TenantAPIParams): Promise<void> {
+    try {
+      await this.http.delete(
+        `/environment/v1/tenant/${encodeURIComponent(tenant)}`
+      );
+
+      return;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getTemplates(): Promise<Templates> {
+    let templatesRes: AxiosResponse;
+    try {
+      templatesRes = await this.http.get(`/template/v1`);
+
+      return templatesRes.data as Templates;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @uriencoded
+  async getTemplate({
+    name,
+  }: GetTemplateParams): Promise<TemplateMetadataInfo> {
+    let templatesRes: AxiosResponse;
+    try {
+      templatesRes = await this.http.get(`/template/v1/${name}`);
+
+      return templatesRes.data as TemplateMetadataInfo;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async importGitHubTemplates({
+    repo,
+    ref,
+    path = "",
+  }: importGitHubTemplatesParams): Promise<void> {
+    try {
+      await this.http.post(`/template/v1/import`, {
+        src: "git",
+        params: {
+          repo,
+          ref,
+          path,
+        },
+      });
+
+      return;
+    } catch (error) {
+      throw error;
     }
   }
 }

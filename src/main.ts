@@ -3,13 +3,13 @@ import { Builder } from "./builder";
 import { Exec } from "./exec";
 
 interface SuborbitalUriConfig {
-  adminUri?: string;
+  apiUri?: string;
   execUri?: string;
   builderUri?: string;
 }
 
 export const localUriConfig: SuborbitalUriConfig = {
-  adminUri: "http://local.suborbital.network:8081",
+  apiUri: "http://local.suborbital.network:8081",
   execUri: "http://local.suborbital.network:8080",
   builderUri: "http://local.suborbital.network:8082",
 };
@@ -19,15 +19,15 @@ export class Suborbital {
   readonly exec: Exec;
   readonly builder: Builder;
 
-  constructor(envToken: string, uriConfig?: SuborbitalUriConfig) {
-    if (!envToken) {
-      throw new Error("Suborbital environment token is required");
+  constructor(apiKey: string, uriConfig?: SuborbitalUriConfig) {
+    if (!apiKey) {
+      throw new Error("An API key is required");
     }
 
-    const { adminUri, execUri, builderUri } = uriConfig || {};
+    const { apiUri, execUri, builderUri } = uriConfig || {};
 
-    this.admin = new Admin({ baseUrl: adminUri });
-    this.exec = new Exec({ baseUrl: execUri, envToken });
-    this.builder = new Builder({ baseUrl: builderUri });
+    this.admin = new Admin({ baseUrl: apiUri, apiKey });
+    this.exec = new Exec({ baseUrl: execUri, apiKey });
+    this.builder = new Builder({ baseUrl: builderUri, apiKey });
   }
 }

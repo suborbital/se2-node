@@ -1,24 +1,18 @@
 export interface Plugin {
-  environment: string;
-  userId: string;
+  tenant: string;
   namespace: string;
   name: string;
 }
 
 export interface UserPluginsParams {
-  environment: string;
-  userId: string;
-  namespace: string;
+  tenant: string;
+  namespace?: string;
 }
 
 export interface VersionedPlugin extends Plugin {
   ref: string;
 }
 
-export interface AuthenticatedPlugin extends Plugin {
+export interface AuthenticatedPlugin {
   token: string;
-}
-
-export interface BuildablePlugin extends AuthenticatedPlugin {
-  language: string;
 }
