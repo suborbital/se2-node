@@ -7,7 +7,7 @@ interface ExecConfig {
   apiKey: string;
 }
 
-const EXEC_URI = "http://e2core-service.suborbital.svc.cluster.local";
+const EXEC_URI = "https://edge.suborbital.network";
 
 interface ExecutionResult {
   result: ArrayBuffer;
